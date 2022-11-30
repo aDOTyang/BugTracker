@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using BugTracker.Data;
 using BugTracker.Models;
 using Microsoft.AspNetCore.Identity;
+using BugTracker.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BugTracker.Controllers
 {
@@ -15,16 +17,19 @@ namespace BugTracker.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<BTUser> _userManager;
+        private readonly ITicketService _ticketService;
 
-        public TicketsController(ApplicationDbContext context, UserManager<BTUser> userManager)
+        public TicketsController(ApplicationDbContext context, UserManager<BTUser> userManager, ITicketService ticketService)
         {
             _context = context;
             _userManager = userManager;
+            _ticketService = ticketService;
         }
 
         // GET: Tickets
         public async Task<IActionResult> Index()
         {
+            int companyId = (await _userManager.GetUserAsync(User)).CompanyId;
             var applicationDbContext = _context.Tickets.Include(t => t.DeveloperUser).Include(t => t.Project).Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType);
             return View(await applicationDbContext.ToListAsync());
         }
@@ -32,7 +37,7 @@ namespace BugTracker.Controllers
         // GET: Tickets/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Tickets == null)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -100,7 +105,7 @@ namespace BugTracker.Controllers
         // GET: Tickets/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Tickets == null)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -135,6 +140,10 @@ namespace BugTracker.Controllers
             {
                 try
                 {
+                    ticket.Created = DateTime.SpecifyKind(ticket.Created, DateTimeKind.Utc);
+                    ticket.Updated = DateTime.UtcNow;
+
+
                     _context.Update(ticket);
                     await _context.SaveChangesAsync();
                 }
@@ -160,14 +169,10 @@ namespace BugTracker.Controllers
             return View(ticket);
         }
 
-        // GET: Tickets/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // GET: Tickets/Archive/5
+        [Authorize(Roles = "Admin, Project Manager")]
+        public async Task<IActionResult> Archive(int? id)
         {
-            if (id == null || _context.Tickets == null)
-            {
-                return NotFound();
-            }
-
             var ticket = await _context.Tickets
                 .Include(t => t.DeveloperUser)
                 .Include(t => t.Project)
@@ -176,6 +181,7 @@ namespace BugTracker.Controllers
                 .Include(t => t.TicketStatus)
                 .Include(t => t.TicketType)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (ticket == null)
             {
                 return NotFound();
@@ -184,28 +190,43 @@ namespace BugTracker.Controllers
             return View(ticket);
         }
 
-        // POST: Tickets/Delete/5
-        [HttpPost, ActionName("Delete")]
+        // POST: Tickets/Archive/5
+        [HttpPost, ActionName("Archive")]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> ArchiveConfirmed(int? id, int projectId)
         {
-            if (_context.Tickets == null)
+            if (id == null)
             {
-                return Problem("Entity set 'ApplicationDbContext.Tickets'  is null.");
+                return NotFound();
             }
-            var ticket = await _context.Tickets.FindAsync(id);
-            if (ticket != null)
+
+            Ticket ticket = await _ticketService.GetTicketByIdAsync(id.Value, projectId);
+            await _ticketService.ArchiveTicketAsync(ticket);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // POST: Tickets/Restore/5
+        [HttpPost, ActionName("Restore")]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RestoreConfirmed(int? id, int projectId)
+        {
+            if (id == null)
             {
-                _context.Tickets.Remove(ticket);
+                return NotFound();
             }
-            
-            await _context.SaveChangesAsync();
+
+            Ticket ticket = await _ticketService.GetTicketByIdAsync(id.Value, projectId);
+            await _ticketService.RestoreTicketAsync(ticket);
+
             return RedirectToAction(nameof(Index));
         }
 
         private bool TicketExists(int id)
         {
-          return _context.Tickets.Any(e => e.Id == id);
+            return _context.Tickets.Any(e => e.Id == id);
         }
     }
 }

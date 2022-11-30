@@ -1,13 +1,21 @@
 ﻿namespace BugTracker.Services.Interfaces;
 
-public class ImageService : IImageService
+public class FileService : IFileService
 {
-    private readonly string defaultImage = "/img/DefaultContactImage.png";
-    public string ConvertByteArrayToFile(byte[] fileData, string extension)
+    // private readonly string[] suffixes = { "Bytes", "KB, "MB, "GB", "TB", "PB" }
+    private readonly string _defaultBTUserImageSrc = "/img/DefaultUserImage.png";
+    private readonly string _defaultCompanyImageSrc = "/img/YOW.png";
+    private readonly string _defaultProjectImageSrc = "/img/DefaultProjectImage.png";
+    public string ConvertByteArrayToFile(byte[] fileData, string extension, int defaultImage)
     {
         if (fileData == null)
         {
-            return defaultImage;
+            switch (defaultImage)
+            {
+                case 1: return _defaultBTUserImageSrc;
+                case 2: return _defaultCompanyImageSrc;
+                case 3: return _defaultProjectImageSrc;
+            }
         }
 
         // try-catch statement will allow application to run despite exceptions/errors
