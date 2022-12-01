@@ -211,14 +211,14 @@ namespace BugTracker.Controllers
         [HttpPost, ActionName("Restore")]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RestoreConfirmed(int? id, int projectId)
+        public async Task<IActionResult> RestoreConfirmed(int? ticketId, int projectId)
         {
-            if (id == null)
+            if (ticketId == null)
             {
                 return NotFound();
             }
 
-            Ticket ticket = await _ticketService.GetTicketByIdAsync(id.Value, projectId);
+            Ticket ticket = await _ticketService.GetTicketByIdAsync(ticketId.Value, projectId);
             await _ticketService.RestoreTicketAsync(ticket);
 
             return RedirectToAction(nameof(Index));

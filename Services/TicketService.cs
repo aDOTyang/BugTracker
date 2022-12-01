@@ -81,7 +81,7 @@ namespace BugTracker.Services
             }
         }
 
-        public async Task<Ticket> GetTicketByIdAsync(int id, int projectId)
+        public async Task<Ticket> GetTicketByIdAsync(int ticketId, int projectId)
         {
             try
             {
@@ -95,7 +95,7 @@ namespace BugTracker.Services
                                                    .Include(p => p.Comments)
                                                    .Include(p => p.History)
                                                    .Include(p => p.Attachments)
-                                                   .FirstOrDefaultAsync(p => p.Id == id && p.ProjectId == projectId);
+                                                   .FirstOrDefaultAsync(p => p.Id == ticketId && p.ProjectId == projectId);
                 return ticket!;
             }
             catch (Exception)

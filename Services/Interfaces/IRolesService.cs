@@ -6,6 +6,6 @@ namespace BugTracker.Services.Interfaces
     {
         public Task<List<BTUser>> GetUsersInRoleAsync(string roleName, int companyId);
 
-        public Task<bool> IsUserInRole(BTUser member, string roleName);
+        public Task<bool> IsUserInRoleAsync(BTUser member, string roleName);
     }
 }

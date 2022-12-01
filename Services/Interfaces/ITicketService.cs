@@ -8,7 +8,7 @@ namespace BugTracker.Services.Interfaces
         public Task<List<Ticket>> GetAllTicketsByProjectIdAsync(int projectId);
         public Task<List<Ticket>> GetArchivedTicketsByProjectIdAsync(int projectId);
         public Task AddTicketAsync(Ticket ticket);
-        public Task<Ticket> GetTicketByIdAsync(int Id, int projectId);
+        public Task<Ticket> GetTicketByIdAsync(int ticketId, int projectId);
         public Task UpdateTicketAsync(Ticket ticket);
         public Task ArchiveTicketAsync(Ticket ticket);
         public Task RestoreTicketAsync(Ticket ticket);
