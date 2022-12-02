@@ -47,7 +47,10 @@ namespace BugTracker.Services
 
         public async Task<List<Ticket>> GetAllTicketsByCompanyIdAsync(int companyId)
         {
-            List<Ticket> tickets = await _context.Tickets.Where(c => c.SubmitterUser!.CompanyId == companyId && c.Archived == false).OrderByDescending(c => c.Updated).ToListAsync();
+            List<Ticket> tickets = await _context.Tickets.Where(c => c.SubmitterUser!.CompanyId == companyId && c.Archived == false)
+                                                         .Include(c=>c.DeveloperUser).Include(c=>c.Project)
+                                                         .Include(c=>c.TicketStatus).Include(c=>c.TicketType)
+                                                         .Include(c=>c.TicketPriority).OrderByDescending(c => c.TicketPriority).ToListAsync();
             return tickets;
         }
 
@@ -81,7 +84,7 @@ namespace BugTracker.Services
             }
         }
 
-        public async Task<Ticket> GetTicketByIdAsync(int ticketId, int projectId)
+        public async Task<Ticket> GetTicketByIdAsync(int ticketId, int companyId)
         {
             try
             {
@@ -95,7 +98,7 @@ namespace BugTracker.Services
                                                    .Include(p => p.Comments)
                                                    .Include(p => p.History)
                                                    .Include(p => p.Attachments)
-                                                   .FirstOrDefaultAsync(p => p.Id == ticketId && p.ProjectId == projectId);
+                                                   .FirstOrDefaultAsync(p => p.Id == ticketId && p.DeveloperUser!.CompanyId == companyId);
                 return ticket!;
             }
             catch (Exception)

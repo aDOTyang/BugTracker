@@ -5,6 +5,7 @@ using BugTracker.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.ComponentModel.Design;
 using System.Diagnostics.Metrics;
 
 namespace BugTracker.Services
@@ -110,10 +111,21 @@ namespace BugTracker.Services
         {
             try
             {
-
                 List<Project> projects = await _context.Projects.Where(c => c.CompanyId == companyId && c.Archived == false)
-                                                                .Include(p => p.Company).Include(p => p.ProjectPriority)
-                                                                .Include(p => p.Tickets).Include(p => p.Members)
+                                                                .Include(p => p.Company).Include(p => p.ProjectPriority).Include(p => p.Members)
+                                                                .Include(p => p.Tickets).ThenInclude(t => t.Comments)
+                                                                .Include(p => p.Tickets).ThenInclude(t => t.Attachments)
+                                                                //.Include(p => p.Tickets).ThenInclude(t => t.Description)
+                                                                .Include(p => p.Tickets).ThenInclude(t => t.History)
+                                                                .Include(p => p.Tickets).ThenInclude(t => t.TicketPriority)
+                                                                .Include(p => p.Tickets).ThenInclude(t => t.TicketStatus)
+                                                                .Include(p => p.Tickets).ThenInclude(t => t.TicketType)
+                                                                //.Include(p => p.Tickets).ThenInclude(t => t.Created)
+                                                                //.Include(p => p.Tickets).ThenInclude(t => t.Updated)
+                                                                //.Include(p => p.Tickets).ThenInclude(t => t.Archived)
+                                                                //.Include(p => p.Tickets).ThenInclude(t => t.ArchivedByProject)
+                                                                .Include(p => p.Tickets).ThenInclude(t => t.SubmitterUser)
+                                                                .Include(p => p.Tickets).ThenInclude(t => t.DeveloperUser)
                                                                 .OrderByDescending(c => c.Name).ToListAsync();
                 return projects;
             }
@@ -139,6 +151,35 @@ namespace BugTracker.Services
 
                 throw;
             }
+        }
+
+        public async Task<int> GetCompanyId(string userId)
+        {
+            BTUser? user = await _context.Users.FindAsync(userId);
+            int companyId = user!.CompanyId;
+            return companyId;
+        }
+        public async Task<List<Project>?> GetUserProjectsAsync(string userId)
+        {
+            List<Project>? projects = (await _context.Users.Include(p => p.Projects).ThenInclude(p => p.ProjectPriority)
+                                                           .Include(p => p.Projects).ThenInclude(p => p.Members)
+                                                           .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t=>t.Comments)
+                                                           .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.Attachments)
+                                                           //.Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.Description)
+                                                           .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.History)
+                                                           .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketPriority)
+                                                           .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketStatus)
+                                                           .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketType)
+                                                           //.Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.Created)
+                                                           //.Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.Updated)
+                                                           //.Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.Archived)
+                                                           //.Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.ArchivedByProject)
+                                                           .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.SubmitterUser)
+                                                           .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.DeveloperUser)
+                                                           .FirstOrDefaultAsync(p => p.Id == userId))?
+                                                           .Projects.ToList();
+
+            return projects;
         }
 
         public async Task<Project> GetProjectByIdAsync(int id, int companyId)

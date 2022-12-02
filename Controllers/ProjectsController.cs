@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace BugTracker.Controllers
 {
+    [Authorize]
     public class ProjectsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -30,10 +31,41 @@ namespace BugTracker.Controllers
         }
 
         // GET: Projects
+        //public async Task<IActionResult> MyProjects()
+        //{
+        //    int companyId = (await _userManager.GetUserAsync(User)).CompanyId;
+
+        //    if (User.IsInRole("Admin"))
+        //    {
+        //        List<Project> projects = await _projectService.GetMyProjectsAsync(userId, companyId);
+        //        return View(projects);
+        //    }
+        //    else
+        //    {
+
+        //    }
+        //}
+
+        /// <summary>
+        /// admin index - all company projects shown
+        /// </summary>
+        /// <returns></returns>
+        // GET: Projects
         public async Task<IActionResult> Index()
         {
             int companyId = (await _userManager.GetUserAsync(User)).CompanyId;
-            List<Project> projects = await _projectService.GetAllProjectsByCompanyIdAsync(companyId);
+
+            List<Project>? projects = new();
+
+            if (User.IsInRole("Admin"))
+            {
+                projects = await _projectService.GetAllProjectsByCompanyIdAsync(companyId);
+            }
+            else
+            {
+                string userId = _userManager.GetUserId(User);
+                projects = await _projectService.GetUserProjectsAsync(userId);
+            }
             return View(projects);
         }
 
@@ -133,7 +165,7 @@ namespace BugTracker.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin, ProjectManager")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,CompanyId,ProjectPriorityId,Name,Description,StartDate,EndDate,ImageFormFile,Archived")] Project project)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,CompanyId,ProjectPriorityId,Name,Description,StartDate,EndDate,Created,ImageFormFile,Archived")] Project project)
         {
             if (id != project.Id)
             {

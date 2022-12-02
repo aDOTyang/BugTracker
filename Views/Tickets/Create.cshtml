@@ -12,23 +12,17 @@
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="DeveloperUserId" />
-            <input type="hidden" asp-for="SubmitterUserId" />
             <div class="form-group">
-                <label asp-for="ProjectId" class="control-label">Project Name:</label>
+                <label asp-for="ProjectId" class="control-label"></label>
                 <select asp-for="ProjectId" class ="form-control" asp-items="ViewBag.ProjectId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="TicketTypeId" class="control-label">Ticket Type:</label>
-                <select asp-for="TicketTypeId" class ="form-control" asp-items="ViewBag.TicketTypeId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="TicketStatusId" class="control-label">Ticket Status:</label>
-                <select asp-for="TicketStatusId" class ="form-control" asp-items="ViewBag.TicketStatusId"></select>
             </div>
             <div class="form-group">
                 <label asp-for="TicketPriorityId" class="control-label">Ticket Priority:</label>
                 <select asp-for="TicketPriorityId" class ="form-control" asp-items="ViewBag.TicketPriorityId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="TicketTypeId" class="control-label">Ticket Type:</label>
+                <select asp-for="TicketTypeId" class ="form-control" asp-items="ViewBag.TicketTypeId"></select>
             </div>
             <div class="form-group">
                 <label asp-for="Title" class="control-label">Ticket Name:</label>
@@ -39,16 +33,22 @@
                 <label asp-for="Description" class="control-label"></label>
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
+            </div>            
+@*            <div class="form-group">
+                <label asp-for="DeveloperUser" class="control-label">Assign A Developer</label>
+                <select asp-for="DeveloperUser" class="form-control" asp-items="ViewBag.DeveloperUser"></select>
+            </div>*@
+            <div class="form-group row justify-content-between mx-1">
+                <input type="submit" value="Create" class="btn btn-primary rounded-pill mt-3 col-3" />
+                <a asp-action="Index" class="btn btn-primary rounded-pill mt-3 col-3">Back to List</a>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
+
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    
 </div>
 
 @section Scripts {

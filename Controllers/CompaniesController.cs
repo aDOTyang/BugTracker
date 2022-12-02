@@ -7,22 +7,26 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BugTracker.Data;
 using BugTracker.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace BugTracker.Controllers
 {
     public class CompaniesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<BTUser> _userManager;
 
-        public CompaniesController(ApplicationDbContext context)
+        public CompaniesController(ApplicationDbContext context, UserManager<BTUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Companies
         public async Task<IActionResult> Index()
         {
-              return View(await _context.Companies.ToListAsync());
+            int companyId = (await _userManager.GetUserAsync(User)).CompanyId;
+            return View(await _context.Companies.Where(c=>c.Id == companyId).ToListAsync());
         }
 
         // GET: Companies/Details/5

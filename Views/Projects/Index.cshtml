@@ -4,11 +4,13 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>All Projects</h1>
-
-<p>
-    <a asp-action="Create">Create New Project</a>
-</p>
+<h1>My Projects</h1>
+@if (User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-action="Create">Create New Project</a>
+    </p>
+}
 <table class="table">
     <thead>
         <tr>
