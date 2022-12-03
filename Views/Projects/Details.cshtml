@@ -71,6 +71,23 @@
             @Html.DisplayFor(model => model.ProjectPriority.Name)
         </dd>
     </dl>
+       <table>
+            <thead>
+                Project Tickets
+            </thead>
+        @foreach (Ticket ticket in Model.Tickets)
+        {
+            <tr>
+                <td>@ticket.Title</td>
+                <td>@ticket.Description</td>
+                <td>@ticket.TicketStatus</td>
+                <td>@ticket.TicketType</td>
+                <td>@ticket.TicketPriority</td>
+                <td><span>Ticket has @ticket.Comments</span> comments.</td>
+                <td><span>Ticket has @ticket.Attachments.Count()</span> attachments.</td>
+            </tr>
+        }
+        </table>
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |

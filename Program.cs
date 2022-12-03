@@ -1,4 +1,5 @@
 using BugTracker.Data;
+using BugTracker.Extensions;
 using BugTracker.Models;
 using BugTracker.Services;
 using BugTracker.Services.Interfaces;
@@ -14,7 +15,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentity<BTUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultUI().AddDefaultTokenProviders();
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddClaimsPrincipalFactory<BTUserClaimsPrincipalFactory>()
+                .AddDefaultUI().AddDefaultTokenProviders();
 
 // custom services
 builder.Services.AddScoped<IFileService, FileService>();

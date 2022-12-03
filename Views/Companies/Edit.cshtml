@@ -1,4 +1,5 @@
 ﻿@model BugTracker.Models.Company
+@using BugTracker.Extensions
 @using BugTracker.Services.Interfaces;
 @using Microsoft.AspNetCore.Identity
 @inject IProjectService _ProjectService;
@@ -7,7 +8,7 @@
 @{
     ViewData["Title"] = "Edit";
     string userId = _UserManager.GetUserId(User);
-    int companyId = await _ProjectService.GetCompanyId(userId);
+    int companyId = User.Identity!.GetCompanyId();
 }
 
 <h1>Edit</h1>

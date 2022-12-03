@@ -153,12 +153,6 @@ namespace BugTracker.Services
             }
         }
 
-        public async Task<int> GetCompanyId(string userId)
-        {
-            BTUser? user = await _context.Users.FindAsync(userId);
-            int companyId = user!.CompanyId;
-            return companyId;
-        }
         public async Task<List<Project>?> GetUserProjectsAsync(string userId)
         {
             List<Project>? projects = (await _context.Users.Include(p => p.Projects).ThenInclude(p => p.ProjectPriority)
@@ -196,7 +190,7 @@ namespace BugTracker.Services
                                                           .Include(p => p.Tickets).ThenInclude(p => p.Attachments)
                                                           .Include(p => p.Tickets).ThenInclude(p => p.Comments)
                                                           .FirstOrDefaultAsync(p => p.Id == id && p.CompanyId == companyId);
-                return project;
+                return project!;
             }
             catch (Exception)
             {

@@ -11,6 +11,9 @@
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="ProjectId" />
+            <input type="hidden" asp-for="Title" />
+            <input type="hidden" asp-for="Description" />
             <input type="hidden" asp-for="Created" />
             <input type="hidden" asp-for="Updated" />
             <input type="hidden" asp-for="ProjectId" />
@@ -18,11 +21,12 @@
             <input type="hidden" asp-for="ArchivedByProject" />
             <input type="hidden" asp-for="DeveloperUserId" />
             <input type="hidden" asp-for="SubmitterUserId" />
-            @*            <div class="form-group">
-            <label asp-for="ProjectId" class="control-label"></label>
-            <select asp-for="ProjectId" class="form-control" asp-items="ViewBag.ProjectId"></select>
-            <span asp-validation-for="ProjectId" class="text-danger"></span>
-            </div>*@
+            <input type="hidden" asp-for="SubmitterUser" />
+            <div class="form-group">
+                <label asp-for="Project!.Name" class="control-label"></label>
+                <input asp-for="Project!.Name" class="form-control" disabled />
+                <span asp-validation-for="Project!.Name" class="text-danger"></span>
+            </div>
             <div class="form-group">
                 <label asp-for="Title" class="control-label">Ticket Name</label>
                 <input asp-for="Title" class="form-control" />
@@ -47,6 +51,11 @@
                 <label asp-for="TicketPriorityId" class="control-label">Ticket Priority</label>
                 <select asp-for="TicketPriorityId" class="form-control" asp-items="ViewBag.TicketPriorityId"></select>
                 <span asp-validation-for="TicketPriorityId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SubmitterUserId" class="control-label">Ticket Owner</label>
+                <input asp-for="SubmitterUser!.FullName" class="form-control" disabled />
+                <span asp-validation-for="SubmitterUserId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="DeveloperUserId" class="control-label">Assigned Developer</label>

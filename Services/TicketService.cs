@@ -19,7 +19,7 @@ namespace BugTracker.Services
         {
             try
             {
-                _context.Add(ticket);
+                _context.Tickets.Add(ticket);
                 await _context.SaveChangesAsync();
             }
             catch (Exception)
@@ -47,10 +47,10 @@ namespace BugTracker.Services
 
         public async Task<List<Ticket>> GetAllTicketsByCompanyIdAsync(int companyId)
         {
-            List<Ticket> tickets = await _context.Tickets.Where(c => c.SubmitterUser!.CompanyId == companyId && c.Archived == false)
-                                                         .Include(c=>c.DeveloperUser).Include(c=>c.Project)
-                                                         .Include(c=>c.TicketStatus).Include(c=>c.TicketType)
-                                                         .Include(c=>c.TicketPriority).OrderByDescending(c => c.TicketPriority).ToListAsync();
+            List<Ticket> tickets = await _context.Tickets.Where(c => c.SubmitterUser!.CompanyId == companyId)
+                                                         .Include(c => c.DeveloperUser).Include(c => c.Project)
+                                                         .Include(c => c.TicketStatus).Include(c => c.TicketType)
+                                                         .Include(c => c.TicketPriority).OrderByDescending(c => c.TicketPriority).ToListAsync();
             return tickets;
         }
 
@@ -58,7 +58,7 @@ namespace BugTracker.Services
         {
             try
             {
-                List<Ticket> tickets = await _context.Tickets.Where(c => c.ProjectId == projectId && c.Archived == false).OrderByDescending(c=>c.Updated).ToListAsync();
+                List<Ticket> tickets = await _context.Tickets.Where(c => c.ProjectId == projectId && c.Archived == false).OrderByDescending(c => c.Updated).ToListAsync();
                 return tickets;
             }
             catch (Exception)
@@ -72,8 +72,8 @@ namespace BugTracker.Services
         {
             try
             {
-                List<Ticket> tickets = await _context.Tickets.Where(t=>t.ProjectId == projectId && t.Archived == true).Include(t => t.DeveloperUser)
-                .Include(t => t.Project).Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType).OrderByDescending(t=>t.Updated).ToListAsync();
+                List<Ticket> tickets = await _context.Tickets.Where(t => t.ProjectId == projectId && t.Archived == true).Include(t => t.DeveloperUser)
+                .Include(t => t.Project).Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType).OrderByDescending(t => t.Updated).ToListAsync();
 
                 return tickets;
             }
@@ -88,17 +88,18 @@ namespace BugTracker.Services
         {
             try
             {
-                // int companyId = (await _userManager.GetUserAsync(User)).CompanyId;
                 Ticket? ticket = await _context.Tickets.Include(p => p.Project)
-                                                   .Include(p => p.TicketPriority)
-                                                   .Include(p => p.TicketStatus)
-                                                   .Include(p => p.TicketType)
-                                                   .Include(p => p.SubmitterUser)
-                                                   .Include(p => p.DeveloperUser)
-                                                   .Include(p => p.Comments)
-                                                   .Include(p => p.History)
-                                                   .Include(p => p.Attachments)
-                                                   .FirstOrDefaultAsync(p => p.Id == ticketId && p.DeveloperUser!.CompanyId == companyId);
+                                                       //.Include(p => p.Title)
+                                                       //.Include(p => p.Description)
+                                                       .Include(p => p.TicketPriority)
+                                                       .Include(p => p.TicketStatus)
+                                                       .Include(p => p.TicketType)
+                                                       //.Include(p => p.SubmitterUserId)
+                                                       //.Include(p => p.DeveloperUserId)
+                                                       .Include(p => p.Comments)
+                                                       .Include(p => p.History)
+                                                       .Include(p => p.Attachments)
+                                                       .FirstOrDefaultAsync(p => p.Id == ticketId && p.SubmitterUser!.CompanyId == companyId);
                 return ticket!;
             }
             catch (Exception)
@@ -106,7 +107,53 @@ namespace BugTracker.Services
                 throw;
             }
         }
+        public async Task<List<TicketPriority>> GetTicketPrioritiesAsync()
+        {
+            try
+            {
+                List<TicketPriority>? ticketPriorities = await _context.TicketPriorities.ToListAsync();
 
+                return ticketPriorities!;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public async Task<List<TicketStatus>> GetTicketStatusesAsync()
+        {
+            try
+            {
+                List<TicketStatus>? ticketStatuses = await _context.TicketStatuses.ToListAsync();
+
+                if (ticketStatuses != null)
+                {
+                    return ticketStatuses;
+                }
+
+                return ticketStatuses!;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public async Task<List<TicketType>> GetTicketTypesAsync()
+        {
+            try
+            {
+                List<TicketType>? ticketTypes = await _context.TicketTypes.ToListAsync();
+
+                return ticketTypes!;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
         public async Task RestoreTicketAsync(Ticket ticket)
         {
             try
@@ -129,7 +176,7 @@ namespace BugTracker.Services
         {
             try
             {
-                _context.Update(ticket);
+                _context.Tickets.Update(ticket);
                 await _context.SaveChangesAsync();
             }
             catch (Exception)
@@ -137,7 +184,6 @@ namespace BugTracker.Services
 
                 throw;
             }
-           
         }
     }
 }

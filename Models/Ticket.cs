@@ -14,9 +14,9 @@ namespace BugTracker.Models
         public int TicketStatusId { get; set; }
         public int TicketPriorityId { get; set; }
         public string? DeveloperUserId { get; set; }
+
         [Required]
         public string? SubmitterUserId { get; set; }
-
 
         [Required]
         [DisplayName("Ticket Title")]
@@ -42,14 +42,19 @@ namespace BugTracker.Models
 
         // nav props
         public virtual Project? Project { get; set; }
+        
         [DisplayName("Priority")]
         public virtual TicketPriority? TicketPriority { get; set; }
+        
         [DisplayName("Status")]
         public virtual TicketStatus? TicketStatus { get; set; }
+        
         [DisplayName("Type")]
         public virtual TicketType? TicketType { get; set; }
+        
         [DisplayName("Ticket Developer")]
         public virtual BTUser? DeveloperUser { get; set;}
+        
         [DisplayName("Submitted By")]
         public virtual BTUser? SubmitterUser { get; set; }
         public virtual ICollection<TicketComment> Comments { get; set; } = new HashSet<TicketComment>();

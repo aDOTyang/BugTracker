@@ -8,8 +8,6 @@
 
 @{
     ViewData["Title"] = "Details";
-    string userId = _UserManager.GetUserId(User);
-    int companyId = await _ProjectService.GetCompanyId(userId);
 }
 <div class="container">
     <div class="card m-3 border border-1 border-dark rounded-3 shadow-lg">
