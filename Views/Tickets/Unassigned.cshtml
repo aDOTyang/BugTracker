@@ -1,0 +1,125 @@
+﻿@model IEnumerable<BugTracker.Models.Ticket>
+@using BugTracker.Extensions
+@using BugTracker.Models.Enums
+@using Microsoft.AspNetCore.Identity
+@using BugTracker.Services.Interfaces;
+@inject UserManager<BTUser> _UserManager
+@inject ITicketService _TicketService
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>All Assigned Tickets</h1>
+
+<p class="row justify-content-between">
+    <a asp-action="Create" class="col-2 btn btn-success rounded-pill mt-3 ms-1">Create New Ticket</a><br />
+    <a asp-action="Index" class="col-2 row btn btn-info rounded-pill mt-3">View All Active Tickets</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Created)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Updated)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Archived)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ArchivedByProject)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Project)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TicketPriority)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TicketStatus)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TicketType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DeveloperUser)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SubmitterUser)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Created)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Updated)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Archived)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ArchivedByProject)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Project.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TicketPriority.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TicketStatus.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TicketType.Name)
+                    </td>
+                    <td>
+                        @{
+                            int companyId = User.Identity!.GetCompanyId();
+                            BTUser? developer = await _TicketService.GetDeveloperAsync(item.Id, companyId);
+                        }
+                        @if (developer is null && User.IsInRole(nameof(BTRoles.Admin)))
+                        {
+                            <a asp-controller="Tickets" asp-action="AssignDev" asp-route-id="@item.Id" class="btn btn-primary btn-sm rounded-pill">Assign Developer</a>
+                        }
+                    </td>
+                    <td>
+                        @{
+                            string? ticketOwner = (await _UserManager.FindByIdAsync(item.SubmitterUserId)).FullName;
+                        }
+                        @ticketOwner
+                    </td>
+                    <td>
+                        <a asp-controller="Tickets" asp-action="Details" asp-route-ticketId="@item.Id" class="btn btn-info rounded-pill mb-2">Details</a>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a asp-controller="Tickets" asp-action="Edit" asp-route-ticketId="@item.Id" class="btn btn-primary rounded-pill mb-2 px-4">Edit</a>
+                            <form asp-controller="Tickets" asp-action="Archive" method="post">
+                                <input type="hidden" asp-for="@item.Id" name="ticketId" />
+                                <input type="submit" class="btn btn-warning rounded-pill" value="Archive" />
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+    </tbody>
+</table>

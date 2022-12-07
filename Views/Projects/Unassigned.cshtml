@@ -1,0 +1,115 @@
+﻿@model IEnumerable<BugTracker.Models.Project>
+@using BugTracker.Models.Enums
+@using BugTracker.Services.Interfaces;
+@using Microsoft.AspNetCore.Identity
+@inject IProjectService _ProjectService;
+@inject UserManager<BTUser> _UserManager;
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>My Projects</h1>
+@if (User.IsInRole("Admin"))
+{
+    <p class="row justify-content-between">
+        <a asp-action="Create" class="col-2 btn btn-success rounded-pill mt-3 ms-1">Create New Project</a>
+        <a asp-action="Index" class="col-2 row btn btn-info rounded-pill mt-3">View All Active Projects</a>
+    </p>
+}
+<table class="table">
+    <thead>
+        <tr class="text-center">
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Created)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StartDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EndDate)
+            </th>
+            <th>
+                Project Image
+            </th>
+            <th>
+                Project Manager
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Archived)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Company)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProjectPriority)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            BTUser? projectManager = await _ProjectService.GetProjectManagerAsync(item.Id);
+            if (projectManager == null)
+            {
+                <tr class="text-center">
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Created)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.StartDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EndDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ImageFormFile)
+                    </td>
+                    <td>
+                        @if (projectManager is null && User.IsInRole(nameof(BTRoles.Admin)))
+                        {
+                            <a asp-controller="Projects" asp-action="AssignPM" asp-route-id="@item.Id" class="btn btn-primary btn-sm rounded-pill">Assign PM</a>
+                        }
+                        else
+                        {
+                            <text>@(projectManager?.FullName ?? "UnAssigned")</text>
+                        }
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Archived)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Company.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProjectPriority.Name)
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-success rounded-pill mb-2">Details</a>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary rounded-pill mb-2 px-4">Edit</a>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <form asp-controller="Projects" asp-action="Archive" method="post">
+                                <input type="hidden" asp-for="@item.Id" name="id" />
+                                <input type="submit" class="btn btn-warning rounded-pill" value="Archive" />
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

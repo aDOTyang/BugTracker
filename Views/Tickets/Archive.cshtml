@@ -1,4 +1,6 @@
-﻿@model IEnumerable<BugTracker.Models.Ticket>
+﻿@using Microsoft.AspNetCore.Identity
+@model IEnumerable<BugTracker.Models.Ticket>
+@inject UserManager<BTUser> _UserManager
 
 @{
     ViewData["Title"] = "Archive";
@@ -84,9 +86,16 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.DeveloperUser.FullName)
+@*                    @{
+                        string? ticketDeveloper = (await _UserManager.FindByIdAsync(item.DeveloperUserId)).FullName;
+                    }
+                    @ticketDeveloper*@
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.SubmitterUser.FullName)
+                    @{
+                        string? ticketOwner = (await _UserManager.FindByIdAsync(item.SubmitterUserId)).FullName;
+                    }
+                    @ticketOwner
                 </td>
                 <td class="text-center">
                     <a asp-controller="Tickets" asp-action="Details" asp-route-ticketId="@item.Id" class="btn btn-success rounded-pill mb-2">Details</a>

@@ -1,7 +1,11 @@
 ﻿@model BugTracker.Models.Ticket
+@using BugTracker.Services.Interfaces
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<BTUser> _UserManager
 
 @{
     ViewData["Title"] = "Edit";
+    string? ticketOwner = (await _UserManager.FindByIdAsync(Model.SubmitterUserId)).FullName;
 }
 
 <h3>Edit Ticket: @Model.Title</h3>
@@ -20,7 +24,6 @@
             <input type="hidden" asp-for="Archived" />
             <input type="hidden" asp-for="ArchivedByProject" />
             <input type="hidden" asp-for="DeveloperUserId" />
-            <input type="hidden" asp-for="SubmitterUserId" />
             <input type="hidden" asp-for="SubmitterUser" />
             <div class="form-group">
                 <label asp-for="Project!.Name" class="control-label"></label>
@@ -54,13 +57,15 @@
             </div>
             <div class="form-group">
                 <label asp-for="SubmitterUserId" class="control-label">Ticket Owner</label>
-                <input asp-for="SubmitterUser!.FullName" class="form-control" disabled />
+                <input asp-for="SubmitterUserId" class="form-control" value="@ticketOwner" disabled />
                 <span asp-validation-for="SubmitterUserId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="DeveloperUserId" class="control-label">Assigned Developer</label>
-                <select asp-for="DeveloperUserId" class="form-control" asp-items="ViewBag.DeveloperUserId"></select>
-                <span asp-validation-for="DeveloperUserId" class="text-danger"></span>
+                <label asp-for="DeveloperUser" class="control-label">Assigned Developer</label>
+                <select asp-for="DeveloperUser" class="form-control" asp-items="ViewBag.DeveloperUser">
+                    <option value="">Unassigned</option>
+                </select>
+                <span asp-validation-for="DeveloperUser" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary rounded-pill mt-3" />

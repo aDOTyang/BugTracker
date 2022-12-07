@@ -13,14 +13,12 @@ namespace BugTracker.Services
     public class ProjectService : IProjectService
     {
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<BTUser> _userManager;
         private readonly IRolesService _rolesService;
 
-        public ProjectService(ApplicationDbContext context, IRolesService rolesService, UserManager<BTUser> userManager)
+        public ProjectService(ApplicationDbContext context, IRolesService rolesService)
         {
             _context = context;
             _rolesService = rolesService;
-            _userManager = userManager;
         }
 
         public async Task<bool> AddMemberToProjectAsync(BTUser member, int projectId)
@@ -157,7 +155,7 @@ namespace BugTracker.Services
         {
             List<Project>? projects = (await _context.Users.Include(p => p.Projects).ThenInclude(p => p.ProjectPriority)
                                                            .Include(p => p.Projects).ThenInclude(p => p.Members)
-                                                           .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t=>t.Comments)
+                                                           .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.Comments)
                                                            .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.Attachments)
                                                            //.Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.Description)
                                                            .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.History)
@@ -259,10 +257,10 @@ namespace BugTracker.Services
             try
             {
                 BTUser? currentPM = await GetProjectManagerAsync(projectId);
-                Project? project = await GetProjectByIdAsync(projectId, currentPM.CompanyId);
 
                 if (currentPM != null)
                 {
+                    Project? project = await GetProjectByIdAsync(projectId, currentPM.CompanyId);
                     project.Members.Remove(currentPM);
                     await _context.SaveChangesAsync();
                 }

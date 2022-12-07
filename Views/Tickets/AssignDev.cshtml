@@ -1,0 +1,33 @@
+﻿@model AssignDevViewModel
+@using BugTracker.Extensions
+@using BugTracker.Models.ViewModels
+@using BugTracker.Services.Interfaces
+@inject ITicketService _TicketService
+@inject IProjectService _ProjectService
+
+
+@{
+    ViewData["Title"] = "Assign Developer";
+    //int companyId = User.Identity!.GetCompanyId();
+    //Project project = await _ProjectService.GetProjectByIdAsync(Model.Project!.Id, companyId);
+    //Ticket ticket = await _TicketService.GetTicketByIdAsync(project.Id, companyId);
+}
+
+<div class="d-flex justify-content-center mt-5 flex-column align-items-center">
+    <h3 class="my-5">Assign Project Manager</h3>
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">@Model.Ticket.Title</div>
+        </div>
+        <div class="card-body">
+            <form asp-action="AssignDev" method="post" class="d-flex flex-column">
+                <input type="hidden" asp-for="@Model.Ticket.Id" />
+                <select asp-items="Model.DevList" asp-for="DevId">
+                    <option value="">Unassigned</option>
+                </select>
+                <button type="submit" class="btn btn-primary rounded-pill my-3">Assign</button>
+                <a asp-action="Details" asp-route-ticketId="@Model.Ticket.Id" class="btn btn-primary rounded-pill my-3">Project Details</a>
+            </form>
+        </div>
+    </div>
+</div>

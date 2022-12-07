@@ -1,13 +1,20 @@
 ﻿@model IEnumerable<BugTracker.Models.Ticket>
+@using BugTracker.Extensions
+@using BugTracker.Models.Enums
+@using Microsoft.AspNetCore.Identity
+@using BugTracker.Services.Interfaces;
+@inject UserManager<BTUser> _UserManager
+@inject ITicketService _TicketService
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>All Tickets</h1>
+<h1>All Assigned Tickets</h1>
 
-<p>
-    <a asp-action="Create">Create New Ticket</a>
+<p class="row justify-content-between">
+    <a asp-action="Create" class="col-2 btn btn-success rounded-pill mt-3 ms-1">Create New Ticket</a><br />
+    <a asp-action="Unassigned" class="col-2 row btn btn-info rounded-pill mt-3">View Unassigned Tickets Only</a>
 </p>
 <table class="table">
     <thead>
@@ -86,13 +93,27 @@
                     @Html.DisplayFor(modelItem => item.TicketType.Name)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.DeveloperUser.FullName)
+                    @{
+                        int companyId = User.Identity!.GetCompanyId();
+                        BTUser? developer = await _TicketService.GetDeveloperAsync(item.Id, companyId);
+                    }
+                    @if (developer is null && User.IsInRole(nameof(BTRoles.Admin)))
+                    {
+                        <a asp-controller="Tickets" asp-action="AssignDev" asp-route-id="@item.Id" class="btn btn-primary btn-sm rounded-pill">Assign Developer</a>
+                    }
+                    else
+                    {
+                        <text>@(developer?.FullName ?? "UnAssigned")</text>
+                    }
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.SubmitterUser.FullName)
+                    @{
+                        string? ticketOwner = (await _UserManager.FindByIdAsync(item.SubmitterUserId)).FullName;
+                    }
+                    @ticketOwner
                 </td>
                 <td>
-                    <a asp-controller="Tickets" asp-action="Details" asp-route-ticketId="@item.Id" class="btn btn-success rounded-pill mb-2">Details</a>
+                    <a asp-controller="Tickets" asp-action="Details" asp-route-ticketId="@item.Id" class="btn btn-info rounded-pill mb-2">Details</a>
                     @if (User.IsInRole("Admin"))
                     {
                         <a asp-controller="Tickets" asp-action="Edit" asp-route-ticketId="@item.Id" class="btn btn-primary rounded-pill mb-2 px-4">Edit</a>

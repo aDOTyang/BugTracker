@@ -11,6 +11,8 @@ using BugTracker.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using BugTracker.Extensions;
+using BugTracker.Models.Enums;
+using BugTracker.Models.ViewModels;
 
 namespace BugTracker.Controllers
 {
@@ -20,13 +22,14 @@ namespace BugTracker.Controllers
         private readonly UserManager<BTUser> _userManager;
         private readonly IFileService _fileService;
         private readonly IProjectService _projectService;
+        private readonly IRolesService _rolesService;
 
-
-        public ProjectsController(UserManager<BTUser> userManager, IFileService fileService, IProjectService projectService)
+        public ProjectsController(UserManager<BTUser> userManager, IFileService fileService, IProjectService projectService, IRolesService rolesService)
         {
             _userManager = userManager;
             _fileService = fileService;
             _projectService = projectService;
+            _rolesService = rolesService;
         }
 
         // GET: Projects
@@ -66,6 +69,69 @@ namespace BugTracker.Controllers
                 projects = await _projectService.GetUserProjectsAsync(userId);
             }
             return View(projects);
+        }
+
+        // GET: Projects/Unassigned
+        public async Task<IActionResult> Unassigned()
+        {
+            int companyId = User.Identity!.GetCompanyId();
+
+            List<Project>? projects = new();
+
+            if (User.IsInRole("Admin"))
+            {
+                projects = await _projectService.GetAllProjectsByCompanyIdAsync(companyId);
+            }
+            else
+            {
+                string userId = _userManager.GetUserId(User);
+                projects = await _projectService.GetUserProjectsAsync(userId);
+            }
+
+            return View(projects);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = nameof(BTRoles.Admin))]
+        // GET: Projects/AssignPM
+        public async Task<IActionResult> AssignPM(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            List<BTUser> projectManagers = await _rolesService.GetUsersInRoleAsync(nameof(BTRoles.ProjectManager), User.Identity!.GetCompanyId());
+            BTUser? currentPM = await _projectService.GetProjectManagerAsync(id.Value);
+
+            AssignPMViewModel viewModel = new()
+            {
+                Project = await _projectService.GetProjectByIdAsync(id.Value, User.Identity!.GetCompanyId()),
+                PMList = new SelectList(projectManagers, "Id", "FullName", currentPM?.Id),
+                PMId = currentPM?.Id
+            };
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = nameof(BTRoles.Admin))]
+        [ValidateAntiForgeryToken]
+        // POST: Projects/AssignPM
+        public async Task<IActionResult> AssignPM(AssignPMViewModel viewModel)
+        {
+            if (viewModel.Project?.Id != null)
+            {
+                if (!string.IsNullOrEmpty(viewModel.PMId))
+                {
+                    await _projectService.AddProjectManagerAsync(viewModel.PMId, viewModel.Project.Id);
+                }
+                else
+                {
+                    await _projectService.RemoveProjectManagerAsync(viewModel.Project.Id);
+                }
+                return RedirectToAction(nameof(Details), new { id = viewModel.Project?.Id });
+            }
+            return View(viewModel);
         }
 
         // GET: Projects/Details/5

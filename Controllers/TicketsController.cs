@@ -14,6 +14,7 @@ using BugTracker.Models.Enums;
 using BugTracker.Services;
 using BugTracker.Extensions;
 using System.ComponentModel.Design;
+using BugTracker.Models.ViewModels;
 
 namespace BugTracker.Controllers
 {
@@ -23,12 +24,14 @@ namespace BugTracker.Controllers
         private readonly UserManager<BTUser> _userManager;
         private readonly ITicketService _ticketService;
         private readonly IProjectService _projectService;
+        private readonly IRolesService _rolesService;
 
-        public TicketsController(UserManager<BTUser> userManager, ITicketService ticketService, IProjectService projectService)
+        public TicketsController(UserManager<BTUser> userManager, ITicketService ticketService, IProjectService projectService, IRolesService rolesService)
         {
             _userManager = userManager;
             _ticketService = ticketService;
             _projectService = projectService;
+            _rolesService = rolesService;
         }
 
         // GET: Tickets
@@ -38,6 +41,15 @@ namespace BugTracker.Controllers
             int companyId = User.Identity!.GetCompanyId();
             List<Ticket> tickets = (await _ticketService.GetAllTicketsByCompanyIdAsync(companyId))
                                                         .Where(c=>c.Archived == false && c.ArchivedByProject == false).ToList();
+            return View(tickets);
+        }
+
+        // GET: Tickets/Unassigned
+        public async Task<IActionResult> Unassigned()
+        {
+            int companyId = User.Identity!.GetCompanyId();
+            List<Ticket> tickets = (await _ticketService.GetAllTicketsByCompanyIdAsync(companyId))
+                                                        .Where(c => c.Archived == false && c.ArchivedByProject == false && c.DeveloperUserId == null).ToList();
             return View(tickets);
         }
 
@@ -58,6 +70,50 @@ namespace BugTracker.Controllers
             }
 
             return View(ticket);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = nameof(BTRoles.Admin))]
+        // GET: Projects/AssignDev
+        public async Task<IActionResult> AssignDev(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            int companyId = User.Identity!.GetCompanyId();
+            List<BTUser> developers = await _rolesService.GetUsersInRoleAsync(nameof(BTRoles.Developer), User.Identity!.GetCompanyId());
+            BTUser? currentDev = await _ticketService.GetDeveloperAsync(id.Value, companyId);
+            
+
+            AssignDevViewModel viewModel = new()
+            {
+                Ticket = await _ticketService.GetTicketByIdAsync(id.Value, companyId),
+                //Project = await _projectService.GetProjectByIdAsync(id.Value, User.Identity!.GetCompanyId()),
+                DevList = new SelectList(developers, "Id", "FullName", currentDev?.Id),
+                DevId = currentDev?.Id
+            };
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = nameof(BTRoles.Admin))]
+        [ValidateAntiForgeryToken]
+        // POST: Projects/AssignDev
+        public async Task<IActionResult> AssignDev(AssignDevViewModel viewModel)
+        {
+            if (viewModel.Ticket?.Id != null)
+            {
+                int companyId = User.Identity!.GetCompanyId();
+                if (!string.IsNullOrEmpty(viewModel.DevId))
+                {
+                    await _ticketService.AddDeveloperToTicketAsync(viewModel.DevId, viewModel.Ticket.Id, companyId);
+                }
+               
+                return RedirectToAction(nameof(Details), new { ticketId = viewModel.Ticket?.Id });
+            }
+            return View(viewModel);
         }
 
         // GET: Tickets/Create
@@ -128,7 +184,7 @@ namespace BugTracker.Controllers
                     return NotFound();
                 }
 
-                //ViewData["DeveloperUser"] = new SelectList(_context.Users, "Id", "Name", ticket.DeveloperUser!.FullName);
+                ViewData["DeveloperUser"] = new SelectList(await _ticketService.GetDevelopersByCompanyAsync(companyId), "Id", "FullName", ticket.DeveloperUser!.FullName);
                 ViewData["TicketStatusId"] = new SelectList(await _ticketService.GetTicketStatusesAsync(), "Id", "Name", ticket.TicketStatusId);
                 ViewData["TicketPriorityId"] = new SelectList(await _ticketService.GetTicketPrioritiesAsync(), "Id", "Name", ticket.TicketPriorityId);
                 ViewData["TicketTypeId"] = new SelectList(await _ticketService.GetTicketTypesAsync(), "Id", "Name", ticket.TicketTypeId);
