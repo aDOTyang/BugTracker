@@ -8,27 +8,38 @@ using Microsoft.EntityFrameworkCore;
 using BugTracker.Data;
 using BugTracker.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
+using BugTracker.Models.ViewModels;
+using BugTracker.Extensions;
+using BugTracker.Services.Interfaces;
+using BugTracker.Models.Enums;
 
 namespace BugTracker.Controllers
 {
+    [Authorize(Roles = nameof(BTRoles.Admin))]
     public class CompaniesController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<BTUser> _userManager;
+        private readonly ICompanyService _companyService;
+        private readonly IRolesService _rolesService;
 
-        public CompaniesController(ApplicationDbContext context, UserManager<BTUser> userManager)
+        public CompaniesController(ApplicationDbContext context, UserManager<BTUser> userManager, ICompanyService companyService, IRolesService rolesService)
         {
             _context = context;
             _userManager = userManager;
+            _companyService = companyService;
+            _rolesService = rolesService;
         }
 
         // GET: Companies
-        public async Task<IActionResult> Index()
-        {
-            int companyId = (await _userManager.GetUserAsync(User)).CompanyId;
-            return View(await _context.Companies.Where(c=>c.Id == companyId).ToListAsync());
-        }
+        //public async Task<IActionResult> Index()
+        //{
+        //    int companyId = (await _userManager.GetUserAsync(User)).CompanyId;
+        //    return View(await _context.Companies.Where(c=>c.Id == companyId).ToListAsync());
+        //}
 
+        [HttpGet]
         // GET: Companies/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -39,6 +50,7 @@ namespace BugTracker.Controllers
 
             var company = await _context.Companies
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (company == null)
             {
                 return NotFound();
@@ -47,119 +59,50 @@ namespace BugTracker.Controllers
             return View(company);
         }
 
-        // GET: Companies/Create
-        public IActionResult Create()
+        /// <summary>
+        /// creates lists of users and roles for assignation, excluding current user
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> ManageUserRoles()
         {
-            return View();
+            List<ManageUserRolesViewModel> model = new();
+            int companyId = User.Identity!.GetCompanyId();
+            List<BTUser> members = await _companyService.GetMembersAsync(companyId);
+            string btUserId = _userManager.GetUserId(User);
+
+            foreach (BTUser member in members)
+            {
+                if (string.Compare(btUserId, member.Id) != 0)
+                {
+                    ManageUserRolesViewModel viewModel = new();
+                    IEnumerable<string> currentRoles = await _rolesService.GetUserRolesAsync(member);
+                    viewModel.BTUser = member;
+                    viewModel.Roles = new MultiSelectList(await _rolesService.GetRolesAsync(), "Name", "Name", currentRoles);
+                    model.Add(viewModel);
+                }
+            }
+            return View(model);
         }
 
-        // POST: Companies/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,ImageFileData,ImageFileType")] Company company)
+        public async Task<IActionResult> ManageUserRoles(ManageUserRolesViewModel viewModel)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(company);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(company);
-        }
+            int companyId = User.Identity!.GetCompanyId();
+            BTUser? btUser = (await _companyService.GetMembersAsync(companyId)).FirstOrDefault(c => c.Id == viewModel.BTUser!.Id);
+            IEnumerable<string> currentRoles = await _rolesService.GetUserRolesAsync(btUser!);
+            string? selectedRole = viewModel.SelectedRoles!.FirstOrDefault();
 
-        // GET: Companies/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null || _context.Companies == null)
+            if (!string.IsNullOrEmpty(selectedRole))
             {
-                return NotFound();
-            }
-
-            var company = await _context.Companies.FindAsync(id);
-            if (company == null)
-            {
-                return NotFound();
-            }
-            return View(company);
-        }
-
-        // POST: Companies/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,ImageFileData,ImageFileType")] Company company)
-        {
-            if (id != company.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
+                if (await _rolesService.RemoveUserFromRolesAsync(btUser!, currentRoles))
                 {
-                    _context.Update(company);
-                    await _context.SaveChangesAsync();
+                    await _rolesService.AddUserToRoleAsync(btUser!, selectedRole);
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CompanyExists(company.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(company);
-        }
-
-        // GET: Companies/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.Companies == null)
-            {
-                return NotFound();
             }
 
-            var company = await _context.Companies
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (company == null)
-            {
-                return NotFound();
-            }
-
-            return View(company);
-        }
-
-        // POST: Companies/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.Companies == null)
-            {
-                return Problem("Entity set 'ApplicationDbContext.Companies'  is null.");
-            }
-            var company = await _context.Companies.FindAsync(id);
-            if (company != null)
-            {
-                _context.Companies.Remove(company);
-            }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool CompanyExists(int id)
-        {
-          return _context.Companies.Any(e => e.Id == id);
+            return RedirectToAction(nameof(ManageUserRoles));
         }
     }
 }

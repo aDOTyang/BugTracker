@@ -24,6 +24,8 @@ builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IRolesService, RolesService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
+builder.Services.AddScoped<ITicketHistoryService, TicketHistoryService>();
+builder.Services.AddScoped<ICompanyService, CompanyService>();
 
 
 builder.Services.AddMvc();

@@ -13,6 +13,9 @@ using Microsoft.AspNetCore.Authorization;
 using BugTracker.Extensions;
 using BugTracker.Models.Enums;
 using BugTracker.Models.ViewModels;
+using BugTracker.Services;
+using System.ComponentModel.Design;
+using System.Net.Sockets;
 
 namespace BugTracker.Controllers
 {
@@ -32,21 +35,12 @@ namespace BugTracker.Controllers
             _rolesService = rolesService;
         }
 
-        // GET: Projects
-        //public async Task<IActionResult> MyProjects()
-        //{
-        //    int companyId = (await _userManager.GetUserAsync(User)).CompanyId;
-
-        //    if (User.IsInRole("Admin"))
-        //    {
-        //        List<Project> projects = await _projectService.GetMyProjectsAsync(userId, companyId);
-        //        return View(projects);
-        //    }
-        //    else
-        //    {
-
-        //    }
-        //}
+        //GET: Projects
+        public async Task<IActionResult> MyProjects()
+        {
+            List<Project> projects = (await _projectService.GetUserProjectsAsync((await _userManager.GetUserAsync(User)).Id))!.ToList();
+            return View(projects);
+        }
 
         /// <summary>
         /// admin index - all company projects shown
@@ -56,18 +50,7 @@ namespace BugTracker.Controllers
         public async Task<IActionResult> Index()
         {
             int companyId = User.Identity!.GetCompanyId();
-
-            List<Project>? projects = new();
-
-            if (User.IsInRole("Admin"))
-            {
-                projects = await _projectService.GetAllProjectsByCompanyIdAsync(companyId);
-            }
-            else
-            {
-                string userId = _userManager.GetUserId(User);
-                projects = await _projectService.GetUserProjectsAsync(userId);
-            }
+            List<Project>? projects = await _projectService.GetAllProjectsByCompanyIdAsync(companyId);
             return View(projects);
         }
 
@@ -153,9 +136,12 @@ namespace BugTracker.Controllers
             return View(project);
         }
 
+        [Authorize(Roles = $"{nameof(BTRoles.Admin)}, {nameof(BTRoles.ProjectManager)}")]
         // GET: Projects/Create
         public async Task<IActionResult> Create()
         {
+            int companyId = User.Identity!.GetCompanyId();
+            ViewData["ProjectManager"] = new SelectList((await _userManager.GetUsersInRoleAsync("ProjectManager")).Where(m => m.CompanyId == companyId), "Id", "FullName");
             ViewData["ProjectPriorityId"] = new SelectList(await _projectService.GetProjectPrioritiesAsync(), "Id", "Name");
             return View(new Project());
         }
@@ -164,9 +150,9 @@ namespace BugTracker.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [Authorize(Roles = "Admin, ProjectManager")]
+        [Authorize(Roles = $"{nameof(BTRoles.Admin)}, {nameof(BTRoles.ProjectManager)}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Created,ProjectPriorityId,Name,Description,StartDate,EndDate,ImageFormFile,Archived")] Project project)
+        public async Task<IActionResult> Create([Bind("Id,Created,ProjectPriorityId,Name,Description,StartDate,EndDate,ImageFormFile,Archived")] Project project, string PMId)
         {
             ModelState.Remove("CompanyId");
             if (ModelState.IsValid)
@@ -191,15 +177,22 @@ namespace BugTracker.Controllers
                     project.ImageFileType = project.ImageFormFile.ContentType;
                 }
 
+                // this addproject method creates the project, after which the id can be accessed
                 await _projectService.AddProjectAsync(project);
+                if (!string.IsNullOrEmpty(PMId))
+                {
+                    await _projectService.AddProjectManagerAsync(PMId, project.Id);
+                }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["ProjectManager"] = new SelectList((await _userManager.GetUsersInRoleAsync("ProjectManager")).Where(m => m.CompanyId == project.CompanyId), "Id", "FullName", PMId);
             ViewData["ProjectPriorityId"] = new SelectList(await _projectService.GetProjectPrioritiesAsync(), "Id", "Name", project.ProjectPriorityId);
             return View(project);
         }
 
         // GET: Projects/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        [Authorize(Roles = $"{nameof(BTRoles.Admin)}, {nameof(BTRoles.ProjectManager)}")]
+        public async Task<IActionResult> Edit(int? id, string PMId)
         {
             if (id == null)
             {
@@ -213,8 +206,7 @@ namespace BugTracker.Controllers
             {
                 return NotFound();
             }
-
-            // ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", project.CompanyId);
+            ViewData["ProjectManager"] = new SelectList((await _userManager.GetUsersInRoleAsync("ProjectManager")).Where(m => m.CompanyId == project.CompanyId), "Id", "FullName", PMId);
             ViewData["ProjectPriorityId"] = new SelectList(await _projectService.GetProjectPrioritiesAsync(), "Id", "Name", project.ProjectPriorityId);
             return View(project);
         }
@@ -223,9 +215,9 @@ namespace BugTracker.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [Authorize(Roles = "Admin, ProjectManager")]
+        [Authorize(Roles = $"{nameof(BTRoles.Admin)}, {nameof(BTRoles.ProjectManager)}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,CompanyId,ProjectPriorityId,Name,Description,StartDate,EndDate,Created,ImageFormFile,Archived")] Project project)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,CompanyId,ProjectPriorityId,Name,Description,StartDate,EndDate,Created,ImageFormFile,Archived")] Project project, string PMId)
         {
             if (id != project.Id)
             {
@@ -255,6 +247,11 @@ namespace BugTracker.Controllers
                     }
 
                     await _projectService.UpdateProjectAsync(project);
+                    if (!string.IsNullOrEmpty(PMId))
+                    {
+                        await _projectService.RemoveProjectManagerAsync(project.Id);
+                        await _projectService.AddProjectManagerAsync(PMId, project.Id);
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -269,6 +266,7 @@ namespace BugTracker.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["ProjectManager"] = new SelectList((await _userManager.GetUsersInRoleAsync("ProjectManager")).Where(m => m.CompanyId == project.CompanyId), "Id", "FullName", PMId);
             ViewData["ProjectPriorityId"] = new SelectList(await _projectService.GetProjectPrioritiesAsync(), "Id", "Name", project.ProjectPriorityId);
             return View(project);
         }
@@ -316,7 +314,7 @@ namespace BugTracker.Controllers
 
         [HttpGet]
         // GET: Projects/Archive/5
-        [Authorize(Roles = "Admin, Project Manager")]
+        [Authorize(Roles = $"{nameof(BTRoles.Admin)}, {nameof(BTRoles.ProjectManager)}")]
         public async Task<IActionResult> Archive()
         {
             int companyId = User.Identity!.GetCompanyId();
@@ -332,7 +330,7 @@ namespace BugTracker.Controllers
         /// <returns></returns>
         // POST: Projects/Archive/5
         [HttpPost, ActionName("Archive")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = nameof(BTRoles.Admin))]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ArchiveConfirmed(int? id)
         {
@@ -355,7 +353,7 @@ namespace BugTracker.Controllers
         /// <returns></returns>
         // POST: Projects/Restore/5
         [HttpPost, ActionName("Restore")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = nameof(BTRoles.Admin))]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RestoreConfirmed(int? id)
         {

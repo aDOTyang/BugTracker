@@ -9,12 +9,12 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>My Projects</h1>
-@if (User.IsInRole("Admin"))
+<h1>All Projects</h1>
+@if (User.IsInRole("Admin") || User.IsInRole("ProjectManager"))
 {
     <p class="row justify-content-between">
         <a asp-action="Create" class="col-2 btn btn-success rounded-pill mt-3 ms-1">Create New Project</a>
-        <a asp-action="Unassigned" class="col-2 row btn btn-info rounded-pill mt-3">View Unassigned Projects Only</a>
+        <a asp-action="Unassigned" class="col-2 row btn btn-info rounded-pill mt-3">View All Unassigned Projects</a>
     </p>
 }
 <table class="table">
@@ -97,7 +97,10 @@
                 </td>
                 <td>
                     <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-success rounded-pill mb-2">Details</a>
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary rounded-pill mb-2 px-4">Edit</a>
+                    @if (User.IsInRole("Admin") || User.IsInRole("ProjectManager"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary rounded-pill mb-2 px-4">Edit</a>
+                    }
                     @if (User.IsInRole("Admin"))
                     {
                         <form asp-controller="Projects" asp-action="Archive" method="post">

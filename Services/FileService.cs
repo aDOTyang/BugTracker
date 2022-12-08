@@ -54,4 +54,23 @@ public class FileService : IFileService
             throw;
         }
     }
+
+    public string FormatFileSize(long bytes)
+    {
+        int counter = 0;
+        decimal number = bytes;
+        while (Math.Round(number / 1024) >= 1)
+        {
+            number /= 1024;
+            counter++;
+        }
+        return string.Format("{0:n1}{1}", number);
+        //return string.Format("{0:n1}{1}", number, suffixes[counter]);
+    }
+
+    public string GetFileIcon(string file)
+    {
+        string ext = Path.GetExtension(file).Replace(".", "");
+        return $"/img/contenttype/{ext}.png";
+    }
 }

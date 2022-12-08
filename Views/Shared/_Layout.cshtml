@@ -1,4 +1,5 @@
 ﻿@using BugTracker.Extensions
+@using BugTracker.Models.Enums
 @using Microsoft.AspNetCore.Identity
 @using BugTracker.Services.Interfaces;
 
@@ -28,36 +29,44 @@
                     @if (SignInManager.IsSignedIn(User))
                     {
                         <ul class="nav nav-pills flex-sm-column flex-row flex-nowrap flex-shrink-1 flex-sm-grow-0 flex-grow-1 mb-sm-auto mb-0 justify-content-center align-items-center align-items-sm-start" id="menu">
-                            <li class="nav-item">
-                                <a asp-area="" asp-controller="Home" asp-action="Index" class="nav-link px-sm-0 px-2">
-                                    <i class="fs-5 bi-house"></i><span class="ms-1 d-none d-sm-inline">Home</span>
+                            <li class="dropdown">
+                                <a asp-controller="Companies" asp-action="Details" class="nav-link px-sm-0 px-2 dropdown-item" id="dropdown">
+                                    <i class="fs-5 bi-building"></i><span class="ms-1 d-none d-sm-inline">Company</span>
                                 </a>
-                            </li>
-                            <li>
                                 @{
                                     int companyId = User.Identity!.GetCompanyId();
                                 }
-                                <a asp-controller="Companies" asp-action="Details" asp-route-id="@companyId" class="nav-link px-sm-0 px-2">
-                                    <i class="fs-5 bi-building"></i><span class="ms-1 d-none d-sm-inline">Company</span>
-                                </a>
+                                <ul>
+                                    <li>
+                                        <a asp-controller="Companies" asp-action="Details" asp-route-id="@companyId" class="nav-link px-sm-0 px-2 dropdown-item">
+                                            <i class="fs-5 bi-building"></i><span class="ms-1 d-none d-sm-inline">My Company</span>
+                                        </a>
+                                    </li>
+                                    @if (User.IsInRole(nameof(BTRoles.Admin)))
+                                    {
+                                        <li>
+                                            <a asp-area="" asp-controller="Companies" asp-action="ManageUserRoles" class="nav-link px-sm-0 px-2 dropdown-item">
+                                                <i class="fs-5 bi-house"></i><span class="ms-1 d-none d-sm-inline">Manage User Roles</span>
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
                             </li>
                             <li class="dropdown">
                                 <a asp-area="" asp-controller="Projects" asp-action="Index" class="nav-link dropdown-toggle px-sm-0 px-2" id="dropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fs-5 bi-file-earmark-ppt"></i><span class="ms-1 d-none d-sm-inline">Projects</span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdown">
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="Projects" asp-action="Create">New project...</a></li>
-                                    @*<li><a class="dropdown-item" asp-area="" asp-controller="Projects" asp-action="Index">Index</a></li>*@
-                                    @if (User.IsInRole("Admin"))
+                                    @if (User.IsInRole("Admin") || User.IsInRole("ProjectManager"))
                                     {
-                                        <li><a class="dropdown-item" asp-area="" asp-controller="Projects" asp-action="Index">All Projects</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Projects" asp-action="Create">Create New project</a></li>
+                                    }
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Projects" asp-action="Index">All Projects</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Projects" asp-action="MyProjects">My Projects</a></li>
+                                    @if (User.IsInRole("Admin") || User.IsInRole("ProjectManager"))
+                                    {
                                         <li><a class="dropdown-item" asp-area="" asp-controller="Projects" asp-action="Archive">Archived Projects</a></li>
                                     }
-                                    else
-                                    {
-                                        <li><a class="dropdown-item" asp-area="" asp-controller="Projects" asp-action="Index">My Projects</a></li>
-                                    }
-                                    
                                 </ul>
                             </li>
                             <li class="dropdown">
@@ -65,17 +74,10 @@
                                     <i class="fs-5 bi-file-earmark-font"></i><span class="ms-1 d-none d-sm-inline">Tickets</span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdown">
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="Tickets" asp-action="Create">New ticket...</a></li>
-                                    @*<li><a class="dropdown-item" asp-area="" asp-controller="Tickets" asp-action="Index">Index</a></li>*@
-                                    @if (User.IsInRole("Admin"))
-                                    {
-                                        <li><a class="dropdown-item" asp-area="" asp-controller="Tickets" asp-action="Index">All Tickets</a></li>
-                                        <li><a class="dropdown-item" asp-area="" asp-controller="Tickets" asp-action="Archive">Archived Tickets</a></li>
-                                    }
-                                    else
-                                    {
-                                        <li><a class="dropdown-item" asp-area="" asp-controller="Tickets" asp-action="Index">My Tickets</a></li>
-                                    }
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Tickets" asp-action="Create">Create New Ticket</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Tickets" asp-action="Index">All Tickets</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Tickets" asp-action="MyTickets">My Tickets</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Tickets" asp-action="Archive">Archived Tickets</a></li>
 
                                 </ul>
                             </li>

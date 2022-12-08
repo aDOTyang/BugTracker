@@ -110,18 +110,15 @@ namespace BugTracker.Services
             try
             {
                 List<Project> projects = await _context.Projects.Where(c => c.CompanyId == companyId && c.Archived == false)
-                                                                .Include(p => p.Company).Include(p => p.ProjectPriority).Include(p => p.Members)
+                                                                .Include(p => p.Company)
+                                                                .Include(p => p.ProjectPriority)
+                                                                .Include(p => p.Members)
                                                                 .Include(p => p.Tickets).ThenInclude(t => t.Comments)
                                                                 .Include(p => p.Tickets).ThenInclude(t => t.Attachments)
-                                                                //.Include(p => p.Tickets).ThenInclude(t => t.Description)
                                                                 .Include(p => p.Tickets).ThenInclude(t => t.History)
                                                                 .Include(p => p.Tickets).ThenInclude(t => t.TicketPriority)
                                                                 .Include(p => p.Tickets).ThenInclude(t => t.TicketStatus)
                                                                 .Include(p => p.Tickets).ThenInclude(t => t.TicketType)
-                                                                //.Include(p => p.Tickets).ThenInclude(t => t.Created)
-                                                                //.Include(p => p.Tickets).ThenInclude(t => t.Updated)
-                                                                //.Include(p => p.Tickets).ThenInclude(t => t.Archived)
-                                                                //.Include(p => p.Tickets).ThenInclude(t => t.ArchivedByProject)
                                                                 .Include(p => p.Tickets).ThenInclude(t => t.SubmitterUser)
                                                                 .Include(p => p.Tickets).ThenInclude(t => t.DeveloperUser)
                                                                 .OrderByDescending(c => c.Name).ToListAsync();
@@ -157,19 +154,14 @@ namespace BugTracker.Services
                                                            .Include(p => p.Projects).ThenInclude(p => p.Members)
                                                            .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.Comments)
                                                            .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.Attachments)
-                                                           //.Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.Description)
                                                            .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.History)
                                                            .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketPriority)
                                                            .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketStatus)
                                                            .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketType)
-                                                           //.Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.Created)
-                                                           //.Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.Updated)
-                                                           //.Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.Archived)
-                                                           //.Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.ArchivedByProject)
                                                            .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.SubmitterUser)
                                                            .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.DeveloperUser)
                                                            .FirstOrDefaultAsync(p => p.Id == userId))?
-                                                           .Projects.ToList();
+                                                           .Projects.Where(p => p.Archived == false).ToList();
 
             return projects;
         }

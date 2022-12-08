@@ -10,7 +10,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>All Assigned Tickets</h1>
+<h1>All Tickets</h1>
 
 <p class="row justify-content-between">
     <a asp-action="Create" class="col-2 btn btn-success rounded-pill mt-3 ms-1">Create New Ticket</a><br />
@@ -114,9 +114,12 @@
                 </td>
                 <td>
                     <a asp-controller="Tickets" asp-action="Details" asp-route-ticketId="@item.Id" class="btn btn-info rounded-pill mb-2">Details</a>
-                    @if (User.IsInRole("Admin"))
+                    @if (User.IsInRole("Admin") || User.IsInRole("ProjectManager") || (await _UserManager.GetUserAsync(User)).Id == item.DeveloperUserId || (await _UserManager.GetUserAsync(User)).Id == item.SubmitterUserId)
                     {
                         <a asp-controller="Tickets" asp-action="Edit" asp-route-ticketId="@item.Id" class="btn btn-primary rounded-pill mb-2 px-4">Edit</a>
+                    }
+                    @if (User.IsInRole("Admin"))
+                    {
                         <form asp-controller="Tickets" asp-action="Archive" method="post">
                             <input type="hidden" asp-for="@item.Id" name="ticketId" />
                             <input type="submit" class="btn btn-warning rounded-pill" value="Archive" />

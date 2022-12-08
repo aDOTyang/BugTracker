@@ -38,6 +38,20 @@ namespace BugTracker.Services
             }
         }
 
+        public async Task AddTicketAttachmentAsync(TicketAttachment ticketAttachment)
+        {
+            try
+            {
+                await _context.AddAsync(ticketAttachment);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<bool> AddDeveloperToTicketAsync(string userId, int ticketId, int companyId)
         {
             try
@@ -80,8 +94,11 @@ namespace BugTracker.Services
         public async Task<List<Ticket>> GetAllTicketsByCompanyIdAsync(int companyId)
         {
             List<Ticket> tickets = await _context.Tickets.Where(c => c.SubmitterUser!.CompanyId == companyId)
-                                                         .Include(c => c.DeveloperUser).Include(c => c.Project)
-                                                         .Include(c => c.TicketStatus).Include(c => c.TicketType)
+                                                         .Include(c => c.DeveloperUser)
+                                                         .Include(c => c.Project)
+                                                         .Include(c => c.TicketStatus)
+                                                         .Include(c => c.TicketType)
+                                                         .Include(c => c.History)
                                                          .Include(c => c.TicketPriority).OrderByDescending(c => c.TicketPriority).ToListAsync();
             return tickets;
         }
@@ -142,8 +159,48 @@ namespace BugTracker.Services
             try
             {
                 //Project project = await _projectService.GetProjectByIdAsync(projectId, companyId);
-                List<BTUser> developers = _context.Users.Where(p=>p.CompanyId == companyId).ToList();
+                List<BTUser> developers = _context.Users.Where(p => p.CompanyId == companyId).ToList();
                 return developers;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<Ticket> GetTicketAsNoTrackingAsync(int ticketId, int companyId)
+        {
+            try
+            {
+                Ticket? ticket = await _context.Tickets.Include(p => p.Project)
+                                       .Include(p => p.TicketPriority)
+                                       .Include(p => p.TicketStatus)
+                                       .Include(p => p.TicketType)
+                                       .Include(p => p.SubmitterUser)
+                                       .Include(p => p.DeveloperUser)
+                                       .Include(p => p.Comments)
+                                       .Include(p => p.History)
+                                       .Include(p => p.Attachments)
+                                       .AsNoTracking()
+                                       .FirstOrDefaultAsync(p => p.Id == ticketId && p.SubmitterUser!.CompanyId == companyId && p.Archived == false);
+                return ticket!;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<TicketAttachment> GetTicketAttachmentByIdAsync(int ticketAttachmentId)
+        {
+            try
+            {
+                TicketAttachment? ticketAttachment = await _context.TicketAttachments
+                                                                  .Include(t => t.User)
+                                                                  .FirstOrDefaultAsync(t => t.Id == ticketAttachmentId);
+                return ticketAttachment!;
             }
             catch (Exception)
             {
@@ -165,8 +222,46 @@ namespace BugTracker.Services
                                                        .Include(p => p.Comments)
                                                        .Include(p => p.History)
                                                        .Include(p => p.Attachments)
-                                                       .FirstOrDefaultAsync(p => p.Id == ticketId && p.SubmitterUser!.CompanyId == companyId);
+                                                       .FirstOrDefaultAsync(p => p.Id == ticketId && p.SubmitterUser!.CompanyId == companyId && p.Archived == false);
                 return ticket!;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<List<Ticket>> GetTicketsByUserIdAsync(string userId, int companyId)
+        {
+            BTUser? btUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            List<Ticket>? tickets = (await _projectService.GetAllProjectsByCompanyIdAsync(companyId)).Where(p => p.Archived == false)
+                                                          .SelectMany(p => p.Tickets!).Where(t => !(t.Archived | t.ArchivedByProject)).ToList();
+            // binary or operator (single pipe) returns 1 (true) unless both bool return 0, in which case it returns 0 (false)
+            try
+            {
+                if (await _rolesService.IsUserInRoleAsync(btUser!, nameof(BTRoles.Admin)))
+                {
+                    return tickets;
+                    //= (await _projectService.GetAllProjectsByCompanyIdAsync(companyId)).SelectMany(p => p.Tickets!).ToList();
+                }
+                else if (await _rolesService.IsUserInRoleAsync(btUser!, nameof(BTRoles.Developer)))
+                {
+                    return tickets.Where(t => t.DeveloperUserId == userId || t.SubmitterUserId == userId).ToList();
+                }
+                else if (await _rolesService.IsUserInRoleAsync(btUser!, nameof(BTRoles.Submitter)))
+                {
+                    return tickets.Where(t => t.SubmitterUserId == userId).ToList();
+                }
+                else if (await _rolesService.IsUserInRoleAsync(btUser!, nameof(BTRoles.ProjectManager)))
+                {
+                    List<Ticket>? projectTickets = (await _projectService.GetUserProjectsAsync(userId))!.SelectMany(t => t.Tickets!).Where(t => !(t.Archived | t.ArchivedByProject)).ToList();
+                    List<Ticket>? submittedTickets = tickets.Where(t => t.SubmitterUserId == userId).ToList();
+                    return tickets = projectTickets.Concat(submittedTickets).ToList();
+                }
+                else
+                {
+                    return tickets;
+                }
             }
             catch (Exception)
             {

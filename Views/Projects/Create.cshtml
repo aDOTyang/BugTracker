@@ -35,18 +35,28 @@
                 <label asp-for="EndDate" class="control-label"></label>
                 <input asp-for="EndDate" class="form-control" />
                 <span asp-validation-for="EndDate" class="text-danger"></span>
-            </div>            
+            </div>
             <div class="form-group">
                 <label asp-for="ProjectPriorityId" class="control-label"></label>
                 <select asp-for="ProjectPriorityId" class="form-control" asp-items="ViewBag.ProjectPriorityId"></select>
             </div>
+            @if (User.IsInRole(nameof(BTRoles.Admin)))
+            {
+                <div class="form-group">
+                    <label asp-for="Members" class="control-label">Project Managers</label>
+                    @* model takes asp-for/name to the post action *@
+                    <select name="PMId" class="form-control" asp-items="ViewBag.ProjectManager">
+                        <option value="">Unassigned</option>
+                    </select>
+                </div>
+            }
             <div>
                 <label asp-for="ImageFormFile" class="control-label">Project Image:</label>
                 <input asp-for="ImageFormFile" type="file" class="form-control" accept=".png,.jpg,.jpeg,.gif,.svg" src="@_FileService.ConvertByteArrayToFile(Model.ImageFileData!, Model.ImageFileType!, (int)DefaultImage.ProjectImage)"
                        onchange="document.getElementById('projectImage').src= window.URL.createObjectURL(this.files[0])" />
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn btn-primary my-3" />
             </div>
         </form>
     </div>

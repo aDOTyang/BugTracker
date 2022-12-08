@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using BugTracker.Extensions;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -31,6 +32,10 @@ namespace BugTracker.Models
         public string? FileContentType { get; set; }
 
         [NotMapped]
+        [DisplayName("Select a file")]
+        [DataType(DataType.Upload)]
+        [MaxFileSize(1024 * 1024)]
+        [AllowedExtensions(new string[] { ".jpg", ".png", ".doc", ".docx", ".xls", ".xlsx", ".pdf" })]
         public IFormFile? FormFile { get; set; }
 
         // nav prop
