@@ -238,6 +238,11 @@ namespace BugTracker.Controllers
                     ticket.Created = DateTime.SpecifyKind(ticket.Created, DateTimeKind.Utc);
                     ticket.Updated = DateTime.UtcNow;
 
+                    if (ticket.DeveloperUserId != null && ticket.TicketStatus!.Name == nameof(BTTicketStatuses.New))
+                    {
+                        ticket.TicketStatusId = (await _ticketService.GetTicketStatusesAsync()).FirstOrDefault(t => t.Name == nameof(BTTicketStatuses.Development))!.Id;
+                    }
+
                     await _ticketService.UpdateTicketAsync(ticket);
                 }
                 catch (DbUpdateConcurrencyException)
@@ -265,19 +270,21 @@ namespace BugTracker.Controllers
         // POST: Tickets/AddTicketAttachment
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddTicketAttachment([Bind("Id,FormFile,Description,TicketId")] TicketAttachment ticketAttachment)
+        public async Task<IActionResult> AddTicketAttachment([Bind("Id,FormFile,Description,TicketId")] TicketAttachment ticketAttachment, int ticketId)
         {
             string statusMessage;
+            ModelState.Remove("UserId");
+            ModelState.Remove("FormFile");
 
             if (ModelState.IsValid && ticketAttachment.FormFile != null)
             {
                 ticketAttachment.FileData = await _fileService.ConvertFileToByteArrayAsync(ticketAttachment.FormFile);
                 ticketAttachment.FileName = ticketAttachment.FormFile.FileName;
                 ticketAttachment.FileContentType = ticketAttachment.FormFile.ContentType;
-
                 ticketAttachment.Created = DateTime.UtcNow;
                 ticketAttachment.UserId = _userManager.GetUserId(User);
 
+                // add to context and save changes only
                 await _ticketService.AddTicketAttachmentAsync(ticketAttachment);
                 statusMessage = "Success: New attachment added to Ticket.";
             }
@@ -287,7 +294,7 @@ namespace BugTracker.Controllers
 
             }
 
-            return RedirectToAction("Details", new { id = ticketAttachment.TicketId, message = statusMessage });
+            return RedirectToAction("Details","Tickets", new { ticketId = ticketAttachment.TicketId, message = statusMessage });
         }
 
         public async Task<IActionResult> ShowFile(int id)

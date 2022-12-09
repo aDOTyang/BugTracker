@@ -7,16 +7,20 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BugTracker.Data;
 using BugTracker.Models;
+using System.Net.Sockets;
+using Microsoft.AspNetCore.Identity;
 
 namespace BugTracker.Controllers
 {
     public class TicketCommentsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<BTUser> _userManager;
 
-        public TicketCommentsController(ApplicationDbContext context)
+        public TicketCommentsController(ApplicationDbContext context, UserManager<BTUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: TicketComments
@@ -55,21 +59,25 @@ namespace BugTracker.Controllers
         }
 
         // POST: TicketComments/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // only accessed from ticket details view currently (incomplete)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,TicketId,UserId,Comment,Created")] TicketComment ticketComment)
+        public async Task<IActionResult> Create([Bind("Id,TicketId,UserId,Comment,Created")] TicketComment ticketComment, int ticketId, string comment)
         {
+            ModelState.Remove("UserId");
             if (ModelState.IsValid)
             {
+                ticketComment.Created = DateTime.UtcNow;
+                ticketComment.Comment = comment;
+                ticketComment.TicketId = ticketId;
+                ticketComment.UserId = _userManager.GetUserId(User);
                 _context.Add(ticketComment);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", "Tickets", new { ticketId = ticketId});
             }
-            ViewData["TicketId"] = new SelectList(_context.Tickets, "Id", "Description", ticketComment.TicketId);
+            ViewData["TicketId"] = new SelectList(_context.Tickets, "Id", "Description", ticketId);
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", ticketComment.UserId);
-            return View(ticketComment);
+            return RedirectToAction("Details","Tickets", new { ticketId = ticketId });
         }
 
         // GET: TicketComments/Edit/5

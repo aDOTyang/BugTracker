@@ -7,16 +7,19 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BugTracker.Data;
 using BugTracker.Models;
+using BugTracker.Services.Interfaces;
 
 namespace BugTracker.Controllers
 {
     public class TicketAttachmentsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IFileService _fileService;
 
-        public TicketAttachmentsController(ApplicationDbContext context)
+        public TicketAttachmentsController(ApplicationDbContext context, IFileService fileService)
         {
             _context = context;
+            _fileService = fileService;
         }
 
         // GET: TicketAttachments
@@ -63,13 +66,19 @@ namespace BugTracker.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (ticketAttachment.FormFile != null)
+                {
+                    ticketAttachment.FileData = await _fileService.ConvertFileToByteArrayAsync(ticketAttachment.FormFile);
+                    ticketAttachment.FileContentType = ticketAttachment.FormFile.ContentType;
+                }
+
                 _context.Add(ticketAttachment);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", "Tickets", new { ticketId = ticketAttachment.TicketId });
             }
             ViewData["TicketId"] = new SelectList(_context.Tickets, "Id", "Description", ticketAttachment.TicketId);
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", ticketAttachment.UserId);
-            return View(ticketAttachment);
+            return RedirectToAction("Details", "Tickets", new { ticketId = ticketAttachment.Id });
         }
 
         // GET: TicketAttachments/Edit/5

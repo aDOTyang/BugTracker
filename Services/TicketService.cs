@@ -222,7 +222,7 @@ namespace BugTracker.Services
                                                        .Include(p => p.Comments)
                                                        .Include(p => p.History)
                                                        .Include(p => p.Attachments)
-                                                       .FirstOrDefaultAsync(p => p.Id == ticketId && p.SubmitterUser!.CompanyId == companyId && p.Archived == false);
+                                                       .FirstOrDefaultAsync(p => p.Id == ticketId && p.SubmitterUser!.CompanyId == companyId && p.ArchivedByProject == false);
                 return ticket!;
             }
             catch (Exception)

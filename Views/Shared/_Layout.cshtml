@@ -30,23 +30,20 @@
                     {
                         <ul class="nav nav-pills flex-sm-column flex-row flex-nowrap flex-shrink-1 flex-sm-grow-0 flex-grow-1 mb-sm-auto mb-0 justify-content-center align-items-center align-items-sm-start" id="menu">
                             <li class="dropdown">
-                                <a asp-controller="Companies" asp-action="Details" class="nav-link px-sm-0 px-2 dropdown-item" id="dropdown">
+                                <a asp-controller="Companies" asp-action="Details" class="nav-link px-sm-0 px-2 dropdown-toggle" id="dropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fs-5 bi-building"></i><span class="ms-1 d-none d-sm-inline">Company</span>
                                 </a>
-                                @{
-                                    int companyId = User.Identity!.GetCompanyId();
-                                }
-                                <ul>
+                                <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdown">
                                     <li>
-                                        <a asp-controller="Companies" asp-action="Details" asp-route-id="@companyId" class="nav-link px-sm-0 px-2 dropdown-item">
-                                            <i class="fs-5 bi-building"></i><span class="ms-1 d-none d-sm-inline">My Company</span>
+                                        <a asp-controller="Companies" asp-action="Details" asp-route-id="@User.Identity!.GetCompanyId()" class="nav-link px-sm-0 px-2 dropdown-item">
+                                            <span class="ms-1 d-none d-sm-inline">My Company</span>
                                         </a>
                                     </li>
                                     @if (User.IsInRole(nameof(BTRoles.Admin)))
                                     {
                                         <li>
                                             <a asp-area="" asp-controller="Companies" asp-action="ManageUserRoles" class="nav-link px-sm-0 px-2 dropdown-item">
-                                                <i class="fs-5 bi-house"></i><span class="ms-1 d-none d-sm-inline">Manage User Roles</span>
+                                                <span class="ms-1 d-none d-sm-inline">Manage User Roles</span>
                                             </a>
                                         </li>
                                     }

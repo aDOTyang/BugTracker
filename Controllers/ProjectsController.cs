@@ -341,8 +341,13 @@ namespace BugTracker.Controllers
 
             int companyId = User.Identity!.GetCompanyId();
             Project project = await _projectService.GetProjectByIdAsync(id.Value, companyId);
-            await _projectService.ArchiveProjectAsync(project);
 
+            foreach(Ticket ticket in project.Tickets)
+            {
+                ticket.ArchivedByProject = true;
+            }
+
+            await _projectService.ArchiveProjectAsync(project);
             return RedirectToAction(nameof(Index));
         }
 
@@ -364,8 +369,13 @@ namespace BugTracker.Controllers
 
             int companyId = User.Identity!.GetCompanyId();
             Project project = await _projectService.GetProjectByIdAsync(id.Value, companyId);
-            await _projectService.RestoreProjectAsync(project);
 
+            foreach (Ticket ticket in project.Tickets)
+            {
+                ticket.ArchivedByProject = false;
+            }
+
+            await _projectService.RestoreProjectAsync(project);
             return RedirectToAction(nameof(Index));
         }
 

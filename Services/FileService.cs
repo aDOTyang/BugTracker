@@ -2,7 +2,7 @@
 
 public class FileService : IFileService
 {
-    // private readonly string[] suffixes = { "Bytes", "KB, "MB, "GB", "TB", "PB" }
+    private readonly string[] suffixes = { "Bytes", "KB", "MB", "GB", "TB", "PB" };
     private readonly string _defaultBTUserImageSrc = "/img/DefaultUserImage.png";
     private readonly string _defaultCompanyImageSrc = "/img/YOW.png";
     private readonly string _defaultProjectImageSrc = "/img/DefaultProjectImage.png";
@@ -47,7 +47,6 @@ public class FileService : IFileService
             byte[] byteFile = memoryStream.ToArray();
             memoryStream.Close();
             return byteFile;
-
         }
         catch (Exception)
         {
@@ -64,8 +63,7 @@ public class FileService : IFileService
             number /= 1024;
             counter++;
         }
-        return string.Format("{0:n1}{1}", number);
-        //return string.Format("{0:n1}{1}", number, suffixes[counter]);
+        return string.Format("{0:n1}{1}", number, suffixes[counter]);
     }
 
     public string GetFileIcon(string file)

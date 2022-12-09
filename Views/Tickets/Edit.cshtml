@@ -5,7 +5,6 @@
 
 @{
     ViewData["Title"] = "Edit";
-    string? ticketOwner = (await _UserManager.FindByIdAsync(Model.SubmitterUserId)).FullName;
 }
 
 <h3>Edit Ticket: @Model.Title</h3>
@@ -57,14 +56,14 @@
             </div>
             <div class="form-group">
                 <label asp-for="SubmitterUserId" class="control-label">Ticket Owner</label>
-                <input asp-for="SubmitterUserId" class="form-control" value="@ticketOwner" disabled />
+                <input asp-for="SubmitterUserId" class="form-control" value="@Model.SubmitterUser!.FullName" disabled />
                 <span asp-validation-for="SubmitterUserId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="DeveloperUser" class="control-label">Assigned Developer</label>
                 <select asp-for="DeveloperUser" class="form-control" asp-items="ViewBag.DeveloperUser">
                     <option value="">
-                        @((!string.IsNullOrEmpty(Model.DeveloperUser!.FullName)) ? Model.DeveloperUser!.FullName : "Unassigned")
+                        @(Model.DeveloperUser?.FullName ?? "Unassigned")
                         </option>
                 </select>
                 <span asp-validation-for="DeveloperUser" class="text-danger"></span>

@@ -101,7 +101,6 @@ namespace BugTracker.Controllers
                     await _rolesService.AddUserToRoleAsync(btUser!, selectedRole);
                 }
             }
-
             return RedirectToAction(nameof(ManageUserRoles));
         }
     }
