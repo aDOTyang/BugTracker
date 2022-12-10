@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% load static %} {% load sass_tags %}
+
+
+{% block css %}
+<!-- Plugins css start-->
+
+<!-- Plugins css Ends-->
+{% endblock %}
+
+
+{% block content %}
+
+
+
+<div class="page-body">
+  {% include "layout/breadcrumb.html" %}
+  <div class="container-fluid">
+
+    {% include "forms/form-widgets/touchspin/components/touchspin-1.html" %}
+    {% include "forms/form-widgets/touchspin/components/touchspin-2.html" %}
+
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scriptcontent %}
+<!-- Plugins JS start-->
+<script src="{% static 'assets/js/touchspin/vendors.min.js'%}"></script>
+<script src="{% static 'assets/js/touchspin/touchspin.js'%}"></script>
+<script src="{% static 'assets/js/touchspin/input-groups.min.js'%}"></script>
+<!-- Plugins JS Ends-->
+{% endblock %}

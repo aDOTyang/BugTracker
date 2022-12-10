@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% load static %} {% load sass_tags %}
+
+{% block css %}
+<!-- Plugins css start-->
+<!-- Plugins css Ends-->
+{% endblock %}
+
+{% block content %}
+
+<div class="page-body">
+      {% include "layout/breadcrumb.html" %}
+      <div class="container-fluid faq-section">
+
+            {% include "miscellaneous/knowledgebase/knowl-category/components/know-category-1.html" %}
+            {% include "miscellaneous/knowledgebase/knowl-category/components/know-category-2.html" %}
+
+      </div>
+</div>
+
+{% endblock %}
+
+{% block scriptcontent %}
+<!-- Plugins JS start-->
+<!-- Plugins JS Ends-->
+{% endblock %}

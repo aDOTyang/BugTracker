@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% load static %} {% load sass_tags %}
+
+{% block css %}
+<!-- Plugins css start-->
+<!-- Plugins css Ends-->
+{% endblock %}
+
+{% block content %}
+
+<div class="page-body">
+      {% include "layout/breadcrumb.html" %}
+      <div class="container-fluid">
+
+            {% include "miscellaneous/job-search/list-view/components/job-list-view.html" %}
+            {% include "miscellaneous/job-search/list-view/components/ui-ux.html" %}
+
+      </div>
+</div>
+
+{% endblock %}
+
+{% block scriptcontent %}
+<!-- Plugins JS start-->
+<!-- Plugins JS Ends-->
+{% endblock %}

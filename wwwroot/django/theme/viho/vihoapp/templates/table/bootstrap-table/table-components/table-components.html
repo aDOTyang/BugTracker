@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% load static %} {% load sass_tags %}
+
+
+
+{% block content %}
+
+<div class="page-body">
+  {% include "layout/breadcrumb.html" %}
+  <div class="container-fluid">
+    <div class="row">
+
+      {% include "table/bootstrap-table/table-components/components/ui-components.html" %}
+      {% include "table/bootstrap-table/table-components/components/alerts.html" %}
+      {% include "table/bootstrap-table/table-components/components/progressbar.html" %}
+      {% include "table/bootstrap-table/table-components/components/checkbox.html" %}
+      {% include "table/bootstrap-table/table-components/components/radio-buttons.html" %}
+      {% include "table/bootstrap-table/table-components/components/select.html" %}
+      {% include "table/bootstrap-table/table-components/components/input.html" %}
+      {% include "table/bootstrap-table/table-components/components/badges.html" %}
+      {% include "table/bootstrap-table/table-components/components/tooltip-triggers.html" %}
+      {% include "table/bootstrap-table/table-components/components/switch.html" %}
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scriptcontent %}
+<!-- Plugins JS start-->
+<!-- <script src="{% static 'assets/js/tooltip-init.js'%}"></script> -->
+<!-- Plugins JS Ends-->
+{% endblock %}

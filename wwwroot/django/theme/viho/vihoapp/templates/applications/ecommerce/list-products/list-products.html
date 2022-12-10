@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% load static %} {% load sass_tags %}
+
+
+{% block css %}
+<!-- Plugins css start-->
+<link rel="stylesheet" type="text/css" href="{% sass_src 'assets/scss/datatables.scss' %}">
+<!-- Plugins css Ends-->
+{% endblock %}
+
+{% block content %}
+<div class="page-body">
+  {% include "layout/breadcrumb.html" %}
+  <div class="container-fluid">
+
+    {% include "applications/ecommerce/list-products/components/list-1.html" %}
+    {% include "applications/ecommerce/list-products/components/list-2.html" %}
+
+
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scriptcontent %}
+<!-- Plugins JS start-->
+<script src="{% static 'assets/js/datatable/datatables/jquery.dataTables.min.js'%}"></script>
+<script src="{% static 'assets/js/rating/jquery.barrating.js'%}"></script>
+<script src="{% static 'assets/js/rating/rating-script.js'%}"></script>
+<script src="{% static 'assets/js/owlcarousel/owl.carousel.js'%}"></script>
+<script src="{% static 'assets/js/ecommerce.js'%}"></script>
+<script src="{% static 'assets/js/product-list-custom.js'%}"></script>
+<script src="{% static 'assets/js/tooltip-init.js'%}"></script>
+<!-- Plugins JS Ends-->
+{% endblock %}

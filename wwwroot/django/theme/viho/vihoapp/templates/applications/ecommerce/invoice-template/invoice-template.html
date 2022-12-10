@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% load static %} {% load sass_tags %}
+
+{% block css %}
+
+{% endblock %}
+
+{% block content %}
+
+<div class="page-body">
+
+  {% include "layout/breadcrumb.html" %}
+  <div class="container invoice">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="card">
+          <div class="card-body">
+            <div>
+              {% include "applications/ecommerce/invoice-template/components/invoice.html" %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scriptcontent %}
+<!-- Plugins JS start-->
+<script src="{% static 'assets/js/counter/jquery.waypoints.min.js'%}"></script>
+<script src="{% static 'assets/js/counter/jquery.counterup.min.js'%}"></script>
+<script src="{% static 'assets/js/counter/counter-custom.js'%}"></script>
+<script src="{% static 'assets/js/print.js' %}"></script>
+<script src="{% static 'assets/js/tooltip-init.js'%}"></script>
+<!-- Plugins JS Ends-->
+{% endblock %}

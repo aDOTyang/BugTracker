@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% load static %} {% load sass_tags %}
+
+{% block css %}
+<!-- Plugins css start-->
+<!-- Plugins css Ends-->
+{% endblock %}
+
+{% block content %}
+
+<div class="page-body">
+  {% include "layout/breadcrumb.html" %}
+  <div class="container-fluid">
+
+    {% include "table/bootstrap-table/basic-table/components/basic-table.html" %}
+    {% include "table/bootstrap-table/basic-table/components/inverse-table.html" %}
+    {% include "table/bootstrap-table/basic-table/components/inverse-table-primary.html" %}
+    {% include "table/bootstrap-table/basic-table/components/hoverable-rows.html" %}
+    {% include "table/bootstrap-table/basic-table/components/contextual-classes.html" %}
+    {% include "table/bootstrap-table/basic-table/components/text-background.html" %}
+    {% include "table/bootstrap-table/basic-table/components/table-head.html" %}
+    {% include "table/bootstrap-table/basic-table/components/table-head-options.html" %}
+    {% include "table/bootstrap-table/basic-table/components/striped-row.html" %}
+    {% include "table/bootstrap-table/basic-table/components/striped-row-Inverse.html" %}
+    {% include "table/bootstrap-table/basic-table/components/caption.html" %}
+    {% include "table/bootstrap-table/basic-table/components/responsive.html" %}
+    {% include "table/bootstrap-table/basic-table/components/breckpoint.html" %}
+
+  </div>
+</div>
+
+{% endblock %}

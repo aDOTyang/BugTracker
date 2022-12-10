@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% load static %} {% load sass_tags %}
+
+
+{% block css %}
+
+{% endblock %}
+
+
+{% block content %}
+<div class="page-body">
+  {% include "layout/breadcrumb.html" %}
+
+  <div class="container-fluid">
+    <div class="email-wrap">
+      <div class="row">
+        {% include "applications/email/email-readmail/readmail.html" %}
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+
+{% block scriptcontent %}
+
+<!-- Plugins JS start-->
+<script src="{% static 'assets/js/editor/ckeditor/ckeditor.js'%}"></script>
+<script src="{% static 'assets/js/editor/ckeditor/adapters/jquery.js'%}"></script>
+<script src="{% static 'assets/js/email-app.js'%}"></script>
+<!-- <script src="{% static 'assets/js/tooltip-init.js'%}"></script> -->
+<!-- Plugins JS Ends-->
+
+{% endblock %}

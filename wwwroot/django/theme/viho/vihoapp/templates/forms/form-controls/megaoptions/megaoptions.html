@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% load static %} {% load sass_tags %}
+
+
+{% block css %}
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="page-body">
+  {% include "layout/breadcrumb.html" %}
+  <div class="container-fluid">
+
+    {% include "forms/form-controls/megaoptions/components/default-style.html" %}
+    {% include "forms/form-controls/megaoptions/components/no-border.html" %}
+    {% include "forms/form-controls/megaoptions/components/solid-border.html" %}
+    {% include "forms/form-controls/megaoptions/components/offer-style.html" %}
+    {% include "forms/form-controls/megaoptions/components/inline-style.html" %}
+    {% include "forms/form-controls/megaoptions/components/vertical-style.html" %}
+    {% include "forms/form-controls/megaoptions/components/horizontal-style.html" %}
+
+
+  </div>
+</div>
+
+{% endblock %}
+
+
+{% block scriptcontent %}
+
+<!-- Plugins JS start-->
+<script src="{% static 'assets/js/button-builder/colorpicker.js'%}"></script>
+<script src="{% static 'assets/js/button-builder/clipboard.js'%}"></script>
+<script src="{% static 'assets/js/button-builder/generator.js'%}"></script>
+<script src="{% static 'assets/js/button-builder/extend-1.0.js'%}"></script>
+<script src="{% static 'assets/js/tooltip-init.js'%}"></script>
+<!-- Plugins JS Ends-->
+
+{% endblock %}
