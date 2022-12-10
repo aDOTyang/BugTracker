@@ -1,0 +1,49 @@
+{% extends 'base.html' %} {% load static %} {% load sass_tags %} {% block css %}
+<!-- Plugins css start-->
+<link rel="stylesheet" type="text/css" href="{% sass_src 'assets/scss/animate.scss' %}" />
+<!-- Plugins css Ends-->
+{% endblock %} {% block content %}
+
+<div class="page-body">
+  {% include "layout/breadcrumb.html" %}
+  <div class="container-fluid">
+    <div class="row project-cards">
+      {% include "applications/projects/projects-list/components/projects-list-1.html" %}
+      <div class="col-sm-12">
+        <div class="card">
+          <div class="card-body">
+            <div class="tab-content" id="top-tabContent">
+              <div class="tab-pane fade show active" id="top-home" role="tabpanel" aria-labelledby="top-home-tab">
+                <div class="row">
+                  {% include "applications/projects/projects-list/components/projects-list-2.html" %}
+                  {% include "applications/projects/projects-list/components/projects-list-3.html" %}
+                </div>
+              </div>
+              <div class="tab-pane fade" id="top-profile" role="tabpanel" aria-labelledby="profile-top-tab">
+                <div class="row">
+                  {% include "applications/projects/projects-list/components/projects-list-4.html" %}
+                  {% include "applications/projects/projects-list/components/projects-list-5.html" %}
+                </div>
+              </div>
+              <div class="tab-pane fade" id="top-contact" role="tabpanel" aria-labelledby="contact-top-tab">
+                <div class="row">
+                  {% include "applications/projects/projects-list/components/projects-list-6.html" %}
+                  {% include "applications/projects/projects-list/components/projects-list-7.html" %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %} {% block scriptcontent %}
+<!-- Plugins JS start-->
+<script src="{% static 'assets/js/prism/prism.min.js'%}"></script>
+<script src="{% static 'assets/js/clipboard/clipboard.min.js'%}"></script>
+<script src="{% static 'assets/js/custom-card/custom-card.js'%}"></script>
+<script src="{% static 'assets/js/height-equal.js'%}"></script>
+<!-- Plugins JS Ends-->
+{% endblock %}

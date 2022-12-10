@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% load static %} {% load sass_tags %}
+
+{% block css %}
+<!-- Plugins css start-->
+<link rel="stylesheet" type="text/css" href="{% sass_src 'assets/scss/photoswipe.scss' %}">
+<!-- Plugins css Ends-->
+{% endblock %}
+
+{% block content %}
+
+<div class="page-body">
+      {% include "layout/breadcrumb.html" %}
+      <div class="container-fluid">
+
+            {% include "miscellaneous/gallery/masonry-gallery/components/gallery-masonry.html" %}
+
+      </div>
+</div>
+
+{% endblock %}
+
+{% block scriptcontent %}
+<!-- Plugins JS start-->
+<script src="{% static 'assets/js/isotope.pkgd.js'%}"></script>
+<script src="{% static 'assets/js/photoswipe/photoswipe.min.js'%}"></script>
+<script src="{% static 'assets/js/photoswipe/photoswipe-ui-default.min.js'%}"></script>
+<script src="{% static 'assets/js/photoswipe/photoswipe.js'%}"></script>
+<script src="{% static 'assets/js/masonry-gallery.js'%}"></script>
+<!-- Plugins JS Ends-->
+{% endblock %}

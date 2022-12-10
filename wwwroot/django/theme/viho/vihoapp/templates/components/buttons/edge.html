@@ -1,0 +1,18 @@
+{% extends "base.html" %} {% load static %} {% load sass_tags %}{% block css %}
+<link rel="stylesheet" type="text/css" href="{% sass_src 'assets/scss/prism.scss' %}"> {% endblock %}
+{% block content %}
+<div class="page-body">
+  {% include "layout/breadcrumb.html" %}
+
+  <!-- Container-fluid starts                    -->
+  <div class="container-fluid">
+    {% include "components/buttons/button-list/edge.html" %}
+  </div>
+  <!-- Container-fluid Ends-->
+</div>
+{% endblock %} {% block scriptcontent %}
+<script src="{% static 'assets/js/prism/prism.min.js' %}"></script>
+<script src="{% static 'assets/js/clipboard/clipboard.min.js' %}"></script>
+<script src="{% static 'assets/js/custom-card/custom-card.js' %}"></script>
+<script src="{% static 'assets/js/tooltip-init.js' %}"></script>
+{% endblock %}

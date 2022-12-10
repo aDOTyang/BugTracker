@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% load static %} {% load sass_tags %}
+
+{% block css %}
+<!-- Plugins css start-->
+<!-- Plugins css Ends-->
+{% endblock %}
+
+{% block content %}
+
+<div class="page-body">
+      {% include "layout/breadcrumb.html" %}
+      <div class="container-fluid">
+
+            {% include "miscellaneous/editors/ckeditor/components/ckeditor.html" %}
+
+      </div>
+</div>
+
+{% endblock %}
+
+{% block scriptcontent %}
+<!-- Plugins JS start-->
+<script src="{% static 'assets/js/editor/ckeditor/ckeditor.js'%}"></script>
+<script src="{% static 'assets/js/editor/ckeditor/adapters/jquery.js'%}"></script>
+<script src="{% static 'assets/js/editor/ckeditor/styles.js'%}"></script>
+<script src="{% static 'assets/js/editor/ckeditor/ckeditor.custom.js'%}"></script>
+<!-- Plugins JS Ends-->
+{% endblock %}

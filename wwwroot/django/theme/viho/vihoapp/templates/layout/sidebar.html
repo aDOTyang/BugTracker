@@ -1,0 +1,507 @@
+{% load static %} {% load sass_tags %}
+<!-- Page Sidebar Start-->
+<header class="main-nav">
+    <div class="sidebar-user text-center"><a class="setting-primary" href="javascript:void(0)"><i
+                data-feather="settings"></i></a><img class="img-90 rounded-circle"
+            src="{% static 'assets/images/dashboard/1.png' alt=" " %}">
+        <div class="badge-bottom"><span class="badge badge-primary">New</span></div>
+        <a href="/user_profile">
+            <h6 class="mt-3 f-14 f-w-600">Emay Walter</h6>
+        </a>
+        <p class="mb-0 font-roboto">Human Resources Department</p>
+        <ul>
+            <li><span><span class="counter">19.8</span>k</span>
+                <p>Follow</p>
+            </li>
+            <li><span>2 year</span>
+                <p>Experince</p>
+            </li>
+            <li><span><span class="counter">95.2</span>k</span>
+                <p>Follower </p>
+            </li>
+        </ul>
+    </div>
+    <nav>
+        <div class="main-navbar">
+            <div class="left-arrow" id="left-arrow"><i data-feather="arrow-left"></i></div>
+            <div id="mainnav">
+                <ul class="nav-menu custom-scrollbar">
+                    <li class="back-btn">
+                        <div class="mobile-back text-end"><span>Back</span><i class="fa fa-angle-right ps-2"
+                                aria-hidden="true"></i></div>
+                    </li>
+                    <li class="sidebar-main-title">
+                        <div>
+                            <h6>General </h6>
+                        </div>
+                    </li>
+                    <li class="dropdown"><a class="nav-link menu-title" href="javascript:void(0)"><i
+                                data-feather="home"></i><span>Dashboard</span></a>
+                        <ul class="nav-submenu menu-content">
+                            <li><a href="/default">Default</a></li>
+                            <li><a href="/ecommerce">Ecommerce</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown"><a class="nav-link menu-title" href="javascript:void(0)"><i
+                                data-feather="airplay"></i><span>Widgets</span></a>
+                        <ul class="nav-submenu menu-content">
+                            <li><a href="/general">General</a></li>
+                            <li><a href="/charts">Chart</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown"><a class="nav-link menu-title" href="javascript:void(0)"><i
+                                data-feather="layout"></i><span>Page layout</span></a>
+                        <ul class="nav-submenu menu-content">
+                            <li><a href="/box">Boxed</a></li>
+                            <li><a href="/rtl">RTL</a></li>
+                            <li><a href="/dark">Dark</a></li>
+                            <li><a href="/footer-light">Footer Light</a></li>
+                            <li><a href="/footer-dark">Footer Dark</a></li>
+                            <li><a href="/footer-fix">Footer Fixed</a></li>
+                        </ul>
+                    </li>
+                    <li class="sidebar-main-title">
+                        <div>
+                            <h6>Components </h6>
+                        </div>
+                    </li>
+                    <li class="dropdown"><a class="nav-link menu-title" href="javascript:void(0)"><i
+                                data-feather="box"></i><span>Ui Kits</span></a>
+                        <ul class="nav-submenu menu-content">
+                            <li><a href="/state-color">State color</a></li>
+                            <li><a href="/typography">Typography</a></li>
+                            <li><a href="/avatars">Avatars</a></li>
+                            <li><a href="/helper">helper classes</a></li>
+                            <li><a href="/grid_simple">Grid</a></li>
+                            <li><a href="/tag-pills">Tag & pills</a></li>
+                            <li><a href="/progressbar">Progress</a></li>
+                            <li><a href="/modal">Modal</a></li>
+                            <li><a href="/alert">Alert</a></li>
+                            <li><a href="/popover">Popover</a></li>
+                            <li><a href="/tooltip">Tooltip</a></li>
+                            <li><a href="/spiners">Spinners</a></li>
+                            <li><a href="/dropdown">Dropdown</a></li>
+                            <li><a href="/accordion">Accordion</a></li>
+                            <li><a class="submenu-title" href="javascript:void(0)">Tabs<span class="sub-arrow"><i
+                                            class="fa fa-chevron-right"></i></span></a>
+                                <ul class="nav-sub-childmenu submenu-content">
+                                    <li><a href="/bootstraptab">Bootstrap Tabs</a></li>
+                                    <li><a href="/linetab">Line Tabs</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="/navs">Navs</a></li>
+                            <li><a href="/shadow">Shadow</a></li>
+                            <li><a href="/lists">Lists</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown"><a class="nav-link menu-title" href="javascript:void(0)"><i
+                                data-feather="folder-plus"></i><span>Bonus Ui</span></a>
+                        <ul class="nav-submenu menu-content">
+                            <li><a href="/scrollable">Scrollable</a></li>
+                            <li><a href="/tree">Tree view</a></li>
+                            <li><a href="/bootstrapnotify">Bootstrap Notify</a></li>
+                            <li><a href="/rating">Rating</a></li>
+                            <li><a href="/dropzone">dropzone</a></li>
+                            <li><a href="/tour">Tour</a></li>
+                            <li><a href="/sweetalert">SweetAlert2</a></li>
+                            <li><a href="/animated_modal">Animated Modal</a></li>
+                            <li><a href="/owlcarousel">Owl Carousel</a></li>
+                            <li><a href="/ribbons">Ribbons</a></li>
+                            <li><a href="/pagination">Pagination</a></li>
+                            <li><a href="/steps">Steps</a></li>
+                            <li><a href="/breadcrumb">Breadcrumb</a></li>
+                            <li><a href="/rangeslider">Range Slider</a></li>
+                            <li><a href="/imagecropper">Image cropper</a></li>
+                            <li><a href="/sticky">Sticky </a></li>
+                            <li><a href="/basiccard">Basic Card</a></li>
+                            <li><a href="/creativecard">Creative Card</a></li>
+                            <li><a href="/tabbedcard">Tabbed Card</a></li>
+                            <li><a href="/draggablecard">Draggable Card</a></li>
+                            <li><a class="submenu-title" href="javascript:void(0)">Timeline<span class="sub-arrow"><i
+                                            class="fa fa-chevron-right"></i></span></a>
+                                <ul class="nav-sub-childmenu submenu-content">
+                                    <li><a href="/timeline1">Timeline 1</a></li>
+                                    <li><a href="/timeline2">Timeline 2</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown"><a class="nav-link menu-title" href="javascript:void(0)"><i
+                                data-feather="edit-3"></i><span>Builders</span></a>
+                        <ul class="nav-submenu menu-content">
+                            <li><a href="/formbuilder1">Form Builder 1</a></li>
+                            <li><a href="/formbuilder2">Form Builder 2</a></li>
+                            <li><a href="/pagebuild">Page Builder</a></li>
+                            <li> <a href="/buttonbuilder">Button Builder</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown"><a class="nav-link menu-title" href="javascript:void(0)"><i
+                                data-feather="cloud-drizzle"></i><span>Animation</span></a>
+                        <ul class="nav-submenu menu-content">
+                            <li><a href="/scrollreval">Scroll Reveal</a></li>
+                            <li><a href="/animation">Animate</a></li>
+                            <li><a href="/AOS">AOS animation</a></li>
+                            <li><a href="/tilt">Tilt Animation</a></li>
+                            <li><a href="/wow">Wow Animation</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown"><a class="nav-link menu-title" href="javascript:void(0)"><i
+                                data-feather="command"></i><span>Icons</span></a>
+                        <ul class="nav-submenu menu-content">
+                            <li><a href="/flagicon">Flag icon</a></li>
+                            <li><a href="/fontawesome">Fontawesome Icon</a></li>
+                            <li><a href="/icoicon">Ico Icon</a></li>
+                            <li><a href="/themify">Themify Icon</a></li>
+                            <li><a href="/feather">Feather icon</a></li>
+                            <li><a href="/whether">Whether Icon </a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown"><a class="nav-link menu-title" href="javascript:void(0)"><i
+                                data-feather="cloud"></i><span>Buttons</span></a>
+                        <ul class="nav-submenu menu-content">
+                            <li><a href="/buttons">Default Style</a></li>
+                            <li><a href="/flat">Flat Style</a></li>
+                            <li><a href="/edge">Edge Style</a></li>
+                            <li><a href="/raised">Raised Style</a></li>
+                            <li><a href="/group">Button Group</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown"><a class="nav-link menu-title" href="javascript:void(0)"><i
+                                data-feather="bar-chart"></i><span>Charts</span></a>
+                        <ul class="nav-submenu menu-content">
+                            <li><a href="/apex">Apex Chart</a></li>
+                            <li><a href="/google">Google Chart</a></li>
+                            <li><a href="/sparkline">Sparkline chart</a></li>
+                            <li><a href="/flot">Flot Chart</a></li>
+                            <li><a href="/knob">Knob Chart</a></li>
+                            <li><a href="/morris">Morris Chart</a></li>
+                            <li><a href="/chartjs">Chatjs Chart</a></li>
+                            <li><a href="/chartist">Chartist Chart</a></li>
+                            <li><a href="/peity">Peity Chart</a></li>
+                        </ul>
+                    </li>
+                    <li class="sidebar-main-title">
+                        <div>
+                            <h6>Forms</h6>
+                        </div>
+                    </li>
+                    <li class="dropdown"> <a class="nav-link menu-title" href="javascript:void(0)"><i
+                                data-feather="sliders"></i><span>Form Controls </span></a>
+                        <ul class="nav-submenu menu-content">
+                            <li><a href="/form_validation">Form Validation</a></li>
+                            <li><a href="/base_input">Base Inputs</a></li>
+                            <li><a href="/radio_checkbox_control">Checkbox & Radio</a></li>
+                            <li><a href="/input_group">Input Groups</a></li>
+                            <li><a href="/megaoptions">Mega Options </a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown"> <a class="nav-link menu-title" href="javascript:void(0)"><i
+                                data-feather="package"></i><span>Form Widgets</span></a>
+                        <ul class="nav-submenu menu-content">
+                            <li><a href="/datepicker">Datepicker</a></li>
+                            <li><a href="/time_picker">Timepicker</a></li>
+                            <li><a href="/datetimepicker">Datetimepicker</a></li>
+                            <li><a href="/daterangepicker">Daterangepicker</a></li>
+                            <li><a href="/touchspin">Touchspin</a></li>
+                            <li><a href="/select2">Select2</a></li>
+                            <li><a href="/switch">Switch</a></li>
+                            <li><a href="/typeahead">Typeahead</a></li>
+                            <li><a href="/clipboard">Clipboard </a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown"> <a class="nav-link menu-title" href="javascript:void(0)"><i
+                                data-feather="layout"></i><span>Form layout</span></a>
+                        <ul class="nav-submenu menu-content">
+                            <li><a href="/default_form">Default Forms</a></li>
+                            <li><a href="/form_wizards">Form Wizard 1</a></li>
+                            <li><a href="/form_wizard_two">Form Wizard 2</a></li>
+                            <li><a href="/form_wizard_three">Form Wizard 3</a></li>
+                        </ul>
+                    </li>
+                    <li class="sidebar-main-title">
+                        <div>
+                            <h6>Table</h6>
+                        </div>
+                    </li>
+                    <li class="dropdown"> <a class="nav-link menu-title" href="javascript:void(0)"><i
+                                data-feather="server"></i><span>Bootstrap Tables </span></a>
+                        <ul class="nav-submenu menu-content">
+                            <li><a href="/basic_table">Basic Tables</a></li>
+                            <li><a href="/sizing_table">Sizing Tables</a></li>
+                            <li><a href="/border_table">Border Tables</a></li>
+                            <li><a href="/styling_table">Styling Tables</a></li>
+                            <li><a href="/table_components">Table components</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown"> <a class="nav-link menu-title" href="javascript:void(0)"><i
+                                data-feather="database"></i><span>Data Tables </span></a>
+                        <ul class="nav-submenu menu-content">
+                            <li><a href="/datatable_basic_init">Basic Init</a></li>
+                            <li><a href="/datatable_advance">Advance Init</a></li>
+                            <li><a href="/datatable_styling">Styling</a></li>
+                            <li><a href="/datatable_AJAX">AJAX</a></li>
+                            <li><a href="/datatable_server_side">Server Side</a></li>
+                            <li><a href="/datatable_plugin">Plug-in</a></li>
+                            <li><a href="/datatable_API">API</a></li>
+                            <li><a href="/datatable_data_source">Data Sources</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown"> <a class="nav-link menu-title" href="javascript:void(0)"><i
+                                data-feather="hard-drive"></i><span>Ex. Data Tables </span></a>
+                        <ul class="nav-submenu menu-content">
+                            <li><a href="/ext_autofill">Auto Fill</a></li>
+                            <li><a href="/ext_basic_button">Basic Button</a></li>
+                            <li><a href="/ext_col_reorder">Column Reorder</a></li>
+                            <li><a href="/ext_fixed_header">Fixed Header</a></li>
+                            <li><a href="/ext_key_table">Key Table</a></li>
+                            <li><a href="/ext_responsive">Responsive</a></li>
+                            <li><a href="/ext_row_reorder">Row Reorder</a></li>
+                            <li><a href="/ext_scroller">Scroller </a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown"><a class="nav-link menu-title link-nav" href="/jsgrid_table"><i
+                                data-feather="file-text"></i><span>Js Grid Table</span></a></li>
+                    <li class="sidebar-main-title">
+                        <div>
+                            <h6>Applications </h6>
+                        </div>
+                    </li>
+                    <li class="dropdown"> <a class="nav-link menu-title" href="javascript:void(0)"><i
+                                data-feather="box"></i><span>Project </span></a>
+                        <ul class="nav-submenu menu-content">
+                            <li><a href="/projects">Project List</a></li>
+                            <li><a href="/projectcreate">Create new </a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown"><a class="nav-link menu-title link-nav" href="/file_manager"><i
+                                data-feather="git-pull-request"></i><span>File manager</span></a></li>
+                    <li class="dropdown"><a class="nav-link menu-title link-nav" href="/kanban"><i
+                                data-feather="monitor"></i><span>kanban Board</span></a></li>
+                    <li class="dropdown"><a class="nav-link menu-title" href="javascript:void(0)"><i
+                                data-feather="shopping-bag"></i><span>Ecommerce</span></a>
+                        <ul class="nav-submenu menu-content">
+                            <li><a href="/product_simple">Product</a></li>
+                            <li><a href="/product_page">Product page</a></li>
+                            <li><a href="/list_products">Product list</a></li>
+                            <li><a href="/payment_details">Payment Details</a></li>
+                            <li><a href="/order_history">Order History</a></li>
+                            <li><a href="/invoice_template">Invoice</a></li>
+                            <li><a href="/cart">Cart</a></li>
+                            <li><a href="/list_wish">Wishlist</a></li>
+                            <li><a href="/checkout">Checkout</a></li>
+                            <li><a href="/pricing">Pricing</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown"><a class="nav-link menu-title" href="javascript:void(0)"><i
+                                data-feather="mail"></i><span>Email</span></a>
+                        <ul class="nav-submenu menu-content">
+                            <li><a href="/email_application">Mail Inbox</a></li>
+                            <li><a href="/email_readmail">Read mail</a></li>
+                            <li><a href="/email_compose">Compose</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown"><a class="nav-link menu-title" href="javascript:void(0)"><i
+                                data-feather="message-circle"></i><span>Chat</span></a>
+                        <ul class="nav-submenu menu-content">
+                            <li><a href="/chat">Chat App</a></li>
+                            <li><a href="/chat_video">Video chat</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown"><a class="nav-link menu-title" href="javascript:void(0)"><i
+                                data-feather="users"></i><span>Users</span></a>
+                        <ul class="nav-submenu menu-content">
+                            <li><a href="/user_profile">Users Profile</a></li>
+                            <li><a href="/edit_profile">Users Edit</a></li>
+                            <li><a href="/user_cards">Users Cards</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown"><a class="nav-link menu-title link-nav" href="/bookmark"><i
+                                data-feather="heart"></i><span>Bookmarks</span></a></li>
+                    <li class="dropdown"><a class="nav-link menu-title link-nav" href="/contacts"><i
+                                data-feather="list"></i><span>Contacts</span></a></li>
+                    <li class="dropdown"><a class="nav-link menu-title link-nav" href="/task"><i
+                                data-feather="check-square"></i><span>Tasks</span></a></li>
+                    <li class="dropdown"><a class="nav-link menu-title link-nav" href="/calendar_basic"><i
+                                data-feather="calendar"></i><span>Calender </span></a></li>
+                    <li class="dropdown"><a class="nav-link menu-title link-nav" href="/social_app"><i
+                                data-feather="zap"></i><span>Social App</span></a></li>
+                    <li class="dropdown"> <a class="nav-link menu-title" href="javascript:void(0)"><i
+                                data-feather="clock"></i><span>Todo </span></a>
+                        <ul class="nav-submenu menu-content">
+                            <li><a href="/to_do_html">Todo </a></li>
+                            <li><a href="/to_do_database">Todo with database </a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown"><a class="nav-link menu-title link-nav" href="/search"><i
+                                data-feather="search"></i><span>Search Result</span></a></li>
+                    <li class="sidebar-main-title">
+                        <div>
+                            <h6>Pages </h6>
+                        </div>
+                    </li>
+                    <li><a class="nav-link menu-title link-nav" href="/landing_page"><i
+                                data-feather="navigation-2"></i><span>Landing page</span></a></li>
+                    <li><a class="nav-link menu-title link-nav" href="/sample_page"><i
+                                data-feather="file"></i><span>Sample page</span></a></li>
+                    <li class="dropdown"><a class="nav-link menu-title link-nav" href="/internationalization"><i
+                                data-feather="aperture"></i><span>Internationalization</span></a></li>
+                    <li class="mega-menu"><a class="nav-link menu-title" href="javascript:void(0)"><i
+                                data-feather="layers"></i><span>Others</span></a>
+                        <div class="mega-menu-container menu-content">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col mega-box">
+                                        <div class="link-section">
+                                            <div class="submenu-title">
+                                                <h5>Error Page</h5>
+                                            </div>
+                                            <div class="submenu-content opensubmegamenu">
+                                                <ul>
+                                                    <li><a href="/error_page1" target="_blank">Error page 1</a></li>
+                                                    <li><a href="/error_page2" target="_blank">Error page 2</a></li>
+                                                    <li><a href="/error_page3" target="_blank">Error page 3</a></li>
+                                                    <li><a href="/error_page4" target="_blank">Error page 4 </a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col mega-box">
+                                        <div class="link-section">
+                                            <div class="submenu-title">
+                                                <h5> Authentication</h5>
+                                            </div>
+                                            <div class="submenu-content opensubmegamenu">
+                                                <ul>
+                                                    <li><a href="/login" target="_blank">Login Simple</a></li>
+                                                    <li><a href="/login_one" target="_blank">Login with bg image</a>
+                                                    </li>
+                                                    <li><a href="/login_two" target="_blank">Login with image two </a>
+                                                    </li>
+                                                    <li><a href="/login_bs_validation" target="_blank">Login With
+                                                            validation</a></li>
+                                                    <li><a href="/login_tt_validation" target="_blank">Login with
+                                                            tooltip</a></li>
+                                                    <li><a href="/login_validation" target="_blank">Login with
+                                                            sweetalert</a></li>
+                                                    <li><a href="/sign_up" target="_blank">Register Simple</a></li>
+                                                    <li><a href="/sign_one" target="_blank">Register with Bg Image </a>
+                                                    </li>
+                                                    <li><a href="/sign_two" target="_blank">Register with Bg video </a>
+                                                    </li>
+                                                    <li><a href="/unlock">Unlock User</a></li>
+                                                    <li><a href="/forget_password">Forget Password</a></li>
+                                                    <li><a href="/creat_password">Creat Password</a></li>
+                                                    <li><a href="/maintenance">Maintenance</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col mega-box">
+                                        <div class="link-section">
+                                            <div class="submenu-title">
+                                                <h5>Coming Soon</h5>
+                                            </div>
+                                            <div class="submenu-content opensubmegamenu">
+                                                <ul>
+                                                    <li><a href="/comingsoon">Coming Simple</a></li>
+                                                    <li><a href="/comingsoon_video">Coming with Bg video</a></li>
+                                                    <li><a href="/comingsoon_img">Coming with Bg Image</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col mega-box">
+                                        <div class="link-section">
+                                            <div class="submenu-title">
+                                                <h5>Email templates</h5>
+                                            </div>
+                                            <div class="submenu-content opensubmegamenu">
+                                                <ul>
+                                                    <li><a href="/basic_temp">Basic Email</a></li>
+                                                    <li><a href="/email_header">Basic With Header</a></li>
+                                                    <li><a href="/template_email">Ecomerce Template</a></li>
+                                                    <li><a href="/template_email_2">Email Template 2</a></li>
+                                                    <li><a href="/ecommerce_temp">Ecommerce Email</a></li>
+                                                    <li><a href="/email_order">Order Success </a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="sidebar-main-title">
+                        <div>
+                            <h6>Miscellaneous </h6>
+                        </div>
+                    </li>
+                    <li class="dropdown"><a class="nav-link menu-title" href="javascript:void(0)"><i
+                                data-feather="image"></i><span>Gallery</span></a>
+                        <ul class="nav-submenu menu-content">
+                            <li><a href="/gallery_grid">Gallery Grid</a></li>
+                            <li><a href="/grid_description">Gallery Grid Desc</a></li>
+                            <li><a href="/masonry_simple">Masonry Gallery</a></li>
+                            <li><a href="/masonry_disc">Masonry with Desc</a></li>
+                            <li><a href="/hover">Hover Effects</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown"><a class="nav-link menu-title" href="javascript:void(0)"><i
+                                data-feather="edit"></i><span>Blog</span></a>
+                        <ul class="nav-submenu menu-content">
+                            <li><a href="/blog_simple">Blog Details</a></li>
+                            <li><a href="/blog_single">Blog Single</a></li>
+                            <li><a href="/add_post">Add Post</a></li>
+                        </ul>
+                    </li>
+                    <li><a class="nav-link menu-title link-nav" href="/FAQ"><i
+                                data-feather="help-circle"></i><span>FAQ</span></a></li>
+                    <li class="dropdown"><a class="nav-link menu-title" href="javascript:void(0)"><i
+                                data-feather="user-check"></i><span>Job Search</span></a>
+                        <ul class="nav-submenu menu-content">
+                            <li><a href="/job_cards">Cards view</a></li>
+                            <li><a href="/job_list">List View</a></li>
+                            <li><a href="/job_details">Job Details</a></li>
+                            <li><a href="/apply">Apply</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown"><a class="nav-link menu-title" href="javascript:void(0)"><i
+                                data-feather="layers"></i><span>Learning</span></a>
+                        <ul class="nav-submenu menu-content">
+                            <li><a href="/learning_list">Learning List</a></li>
+                            <li><a href="/learning_detailed">Detailed Course</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown"><a class="nav-link menu-title" href="javascript:void(0)"><i
+                                data-feather="map"></i><span>Maps</span></a>
+                        <ul class="nav-submenu menu-content">
+                            <li><a href="/maps_js">Maps JS</a></li>
+                            <li><a href="/vector_maps">Vector Maps</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown"><a class="nav-link menu-title" href="javascript:void(0)"><i
+                                data-feather="git-pull-request"></i><span>Editors</span></a>
+                        <ul class="nav-submenu menu-content">
+                            <li><a href="/summernote">Summer Note</a></li>
+                            <li><a href="/ckeditor">CK editor</a></li>
+                            <li><a href="/simple_mde">MDE editor</a></li>
+                            <li><a href="/ace_code">ACE code editor</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown"><a class="nav-link menu-title" href="javascript:void(0)"><i
+                                data-feather="database"></i><span>Knowledgebase</span></a>
+                        <ul class="nav-submenu menu-content">
+                            <li><a href="/knowledgebase">Knowledgebase</a></li>
+                            <li><a href="/know_category">Knowledge category</a></li>
+                            <li><a href="/know_detail">Knowledge detail</a></li>
+                        </ul>
+                    </li>
+                    <li><a class="nav-link menu-title link-nav" href="/support_ticket"><i
+                                data-feather="headphones"></i><span>Support Ticket</span></a></li>
+                </ul>
+            </div>
+            <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
+        </div>
+    </nav>
+</header>
+<!-- Page Sidebar Ends-->

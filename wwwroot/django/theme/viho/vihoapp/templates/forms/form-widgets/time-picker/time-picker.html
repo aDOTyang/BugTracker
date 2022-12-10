@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% load static %} {% load sass_tags %}
+
+{% block css %}
+<!-- Plugins css start-->
+<link rel="stylesheet" type="text/css" href="{% sass_src 'assets/scss/timepicker.scss' %}">
+<!-- Plugins css Ends-->
+{% endblock %}
+
+{% block content %}
+
+<div class="page-body">
+      {% include "layout/breadcrumb.html" %}
+      <div class="container-fluid">
+
+            {% include "forms/form-widgets/time-picker/components/time-picker.html" %}
+
+      </div>
+</div>
+
+{% endblock %}
+
+
+{% block scriptcontent %}
+<!-- Plugins JS start-->
+<script src="{% static 'assets/js/time-picker/jquery-clockpicker.min.js'%}"></script>
+<script src="{% static 'assets/js/time-picker/highlight.min.js'%}"></script>
+<script src="{% static 'assets/js/time-picker/clockpicker.js'%}"></script>
+<!-- Plugins JS Ends-->
+{% endblock %}

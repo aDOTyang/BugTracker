@@ -1,0 +1,22 @@
+{% extends 'base-other-page.html' %}
+
+{% load static %} {% load sass_tags %}
+
+{% block css %}
+<!-- Plugins css start-->
+<link rel="stylesheet" type="text/css" href="{% sass_src 'assets/scss/animate.scss' %}">
+<!-- Plugins css Ends-->
+{% endblock %}
+
+{% block content %}
+
+{% include "pages/others/authentication/sign-up-wizard/components/sign-up-wizard.html" %}
+
+{% endblock %}
+
+{% block scriptcontent %}
+<!-- Plugins JS start-->
+<script src="{% static 'assets/js/form-wizard/form-wizard-five.js'%}"></script>
+<script src="{% static 'assets/js/tooltip-init.js'%}"></script>
+<!-- Plugins JS Ends-->
+{% endblock %}

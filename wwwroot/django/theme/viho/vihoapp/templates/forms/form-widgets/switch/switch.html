@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% load static %} {% load sass_tags %}
+
+{% block content %}
+<div class="page-body">
+  {% include "layout/breadcrumb.html" %}
+  <div class="container-fluid">
+    <div class="row">
+      {% include "forms/form-widgets/switch/section1.html" %}
+      {% include "forms/form-widgets/switch/section2.html" %}
+
+    </div>
+  </div>
+</div>
+{% endblock %}

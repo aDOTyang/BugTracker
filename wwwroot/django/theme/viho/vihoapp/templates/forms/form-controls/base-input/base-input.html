@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% load static %} {% load sass_tags %}
+
+{% block css %}
+
+{% endblock %}
+
+{% block content %}
+
+<div class="page-body">
+      {% include "layout/breadcrumb.html" %}
+      <div class="container-fluid">
+
+            {% include "forms/form-controls/base-input/components/basic-form.html" %}
+            {% include "forms/form-controls/base-input/components/basic-input.html" %}
+            {% include "forms/form-controls/base-input/components/edges-input.html" %}
+            {% include "forms/form-controls/base-input/components/flat-input.html" %}
+            {% include "forms/form-controls/base-input/components/raise-input.html" %}
+            {% include "forms/form-controls/base-input/components/solid-input.html" %}
+            {% include "forms/form-controls/base-input/components/input-sizing.html" %}
+            {% include "forms/form-controls/base-input/components/custom-controls.html" %}
+
+      </div>
+</div>
+
+{% endblock %}
