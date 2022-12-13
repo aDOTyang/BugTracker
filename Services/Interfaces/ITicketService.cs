@@ -4,9 +4,9 @@ namespace BugTracker.Services.Interfaces
 {
     public interface ITicketService
     {
-        public Task<bool> AddDeveloperToTicketAsync(string userId, int projectId, int companyId);
         public Task AddTicketAsync(Ticket ticket);
         public Task AddTicketAttachmentAsync(TicketAttachment ticketAttachment);
+        public Task<bool> AddDeveloperToTicketAsync(string userId, int ticketId, int companyId);
         public Task ArchiveTicketAsync(Ticket ticket);
         public Task<List<Ticket>> GetAllTicketsByCompanyIdAsync(int companyId);
         public Task<List<Ticket>> GetAllTicketsByProjectIdAsync(int projectId);
@@ -20,7 +20,7 @@ namespace BugTracker.Services.Interfaces
         public Task<List<TicketPriority>> GetTicketPrioritiesAsync();
         public Task<List<TicketStatus>> GetTicketStatusesAsync();
         public Task<List<TicketType>> GetTicketTypesAsync();
-        public Task RemoveDeveloperAsync(int projectId, int companyId);
+        public Task RemoveDeveloperAsync(int ticketId, int companyId);
         public Task RestoreTicketAsync(Ticket ticket);
         public Task UpdateTicketAsync(Ticket ticket);
     }

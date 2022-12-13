@@ -14,11 +14,13 @@ namespace BugTracker.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly IRolesService _rolesService;
+        private readonly UserManager<BTUser> _userManager;
 
-        public ProjectService(ApplicationDbContext context, IRolesService rolesService)
+        public ProjectService(ApplicationDbContext context, IRolesService rolesService, UserManager<BTUser> userManager)
         {
             _context = context;
             _rolesService = rolesService;
+            _userManager = userManager;
         }
 
         public async Task<bool> AddMemberToProjectAsync(BTUser member, int projectId)
@@ -150,20 +152,27 @@ namespace BugTracker.Services
 
         public async Task<List<Project>?> GetUserProjectsAsync(string userId)
         {
-            List<Project>? projects = (await _context.Users.Include(p => p.Projects).ThenInclude(p => p.ProjectPriority)
-                                                           .Include(p => p.Projects).ThenInclude(p => p.Members)
-                                                           .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.Comments)
-                                                           .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.Attachments)
-                                                           .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.History)
-                                                           .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketPriority)
-                                                           .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketStatus)
-                                                           .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketType)
-                                                           .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.SubmitterUser)
-                                                           .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.DeveloperUser)
-                                                           .FirstOrDefaultAsync(p => p.Id == userId))?
-                                                           .Projects.Where(p => p.Archived == false).ToList();
+            if (await _rolesService.IsUserInRoleAsync(await _userManager.FindByIdAsync(userId), nameof(BTRoles.Admin)))
+            {
+                int companyId = (await _userManager.FindByIdAsync(userId)).CompanyId;
+                List<Project>? projects = (await GetAllProjectsByCompanyIdAsync(companyId)).Where(p=>p.Archived == false).ToList();
+                return projects;
+            } else {
 
-            return projects;
+                List<Project>? projects = (await _context.Users.Include(p => p.Projects).ThenInclude(p => p.ProjectPriority)
+                                                               .Include(p => p.Projects).ThenInclude(p => p.Members)
+                                                               .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.Comments)
+                                                               .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.Attachments)
+                                                               .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.History)
+                                                               .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketPriority)
+                                                               .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketStatus)
+                                                               .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketType)
+                                                               .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.SubmitterUser)
+                                                               .Include(p => p.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.DeveloperUser)
+                                                               .FirstOrDefaultAsync(p => p.Id == userId))?
+                                                               .Projects.Where(p => p.Archived == false).ToList();
+                return projects;
+            }
         }
 
         public async Task<Project> GetProjectByIdAsync(int id, int companyId)
