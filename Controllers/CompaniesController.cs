@@ -39,6 +39,50 @@ namespace BugTracker.Controllers
         //    return View(await _context.Companies.Where(c=>c.Id == companyId).ToListAsync());
         //}
 
+        // GET: Companies/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null || _context.Companies == null)
+            {
+                return NotFound();
+            }
+
+            var company = await _context.Companies.FindAsync(id);
+            if (company == null)
+            {
+                return NotFound();
+            }
+            return View(company);
+        }
+
+        // POST: Companies/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,ImageFileData,ImageFileType")] Company company)
+        {
+            if (id != company.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(company);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(company);
+        }
+
         [HttpGet]
         // GET: Companies/Details/5
         public async Task<IActionResult> Details(int? id)

@@ -22,8 +22,11 @@
             <input type="hidden" asp-for="ProjectId" />
             <input type="hidden" asp-for="Archived" />
             <input type="hidden" asp-for="ArchivedByProject" />
-            <input type="hidden" asp-for="DeveloperUserId" />
+            <input type="hidden" asp-for="TicketStatus" />
+            <input type="hidden" asp-for="DeveloperUser" />
             <input type="hidden" asp-for="SubmitterUser" />
+            <input type="hidden" asp-for="DeveloperUserId" />
+            <input type="hidden" asp-for="SubmitterUserId" />
             <div class="form-group">
                 <label asp-for="Project!.Name" class="control-label"></label>
                 <input asp-for="Project!.Name" class="form-control" disabled />
@@ -56,17 +59,16 @@
             </div>
             <div class="form-group">
                 <label asp-for="SubmitterUserId" class="control-label">Ticket Owner</label>
-                <input asp-for="SubmitterUserId" class="form-control" value="@Model.SubmitterUser!.FullName" disabled />
-                <span asp-validation-for="SubmitterUserId" class="text-danger"></span>
+                <input asp-for="SubmitterUserId" class="form-control" value="@((_UserManager.FindByIdAsync(Model.SubmitterUserId).Result.FullName))" disabled />
             </div>
             <div class="form-group">
                 <label asp-for="DeveloperUser" class="control-label">Assigned Developer</label>
-                <select asp-for="DeveloperUser" class="form-control" asp-items="ViewBag.DeveloperUser">
+                <select asp-for="DeveloperUserId" name="newDevId" class="form-control" asp-items="ViewBag.DeveloperUser">
                     <option value="">
                         @(Model.DeveloperUser?.FullName ?? "Unassigned")
                         </option>
                 </select>
-                <span asp-validation-for="DeveloperUser" class="text-danger"></span>
+                <span asp-validation-for="DeveloperUserId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary rounded-pill mt-3" />

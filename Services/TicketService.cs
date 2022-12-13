@@ -138,7 +138,6 @@ namespace BugTracker.Services
             try
             {
                 Ticket? ticket = (await GetTicketByIdAsync(ticketId, companyId));
-                //string? devId = (await GetTicketByIdAsync(ticketId, companyId)).DeveloperUserId;
 
                 if (ticket.DeveloperUserId == null)
                 {
@@ -319,15 +318,16 @@ namespace BugTracker.Services
             }
         }
 
-        public async Task RemoveDeveloperAsync(int projectId, int companyId)
+        public async Task RemoveDeveloperAsync(int ticketId, int companyId)
         {
             try
             {
-                BTUser? currentDev = await GetDeveloperAsync(projectId, companyId);
+                Ticket? ticket = await GetTicketByIdAsync(ticketId, companyId);
+                Project? project = await _projectService.GetProjectByIdAsync(ticket.ProjectId, companyId);
+                BTUser? currentDev = await GetDeveloperAsync(ticketId, companyId);
 
                 if (currentDev != null)
                 {
-                    Project? project = await _projectService.GetProjectByIdAsync(projectId, currentDev.CompanyId);
                     project.Members.Remove(currentDev);
                     await _context.SaveChangesAsync();
                 }
