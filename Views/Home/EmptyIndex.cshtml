@@ -18,6 +18,16 @@
     <div class="row">
         <div class="col-xl-12 box-col-12 des-xl-100">
             <div class="row">
+                <div class="col-xl-12 col-md-6 box-col-6 des-xl-50">
+                    <div class="card profile-greeting">
+                        <div class="card-body text-center mt-3">
+                            <h3 class="font-dark">Hello, @(User.Identity?.Name! ?? "please sign in to see your data")!</h3>
+                            @*                            <p class="font-dark">How YOU doing?</p>*@
+                        </div>
+                    </div>
+                </div>
+                @if ((User.Identity?.IsAuthenticated!).Value)
+                {
                     <div class="col-xl-6 col-md-6 col-sm-6 box-col-6 des-xl-25 rate-sec">
                         <div class="card income-card card-primary">
                             <div class="card-body text-start">
@@ -979,5 +989,6 @@
                             </div>
                         </div>
                     </div>
+                }
             </div>
         </div>

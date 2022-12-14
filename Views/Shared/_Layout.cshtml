@@ -6,6 +6,8 @@
 @inject SignInManager<BTUser> SignInManager
 @inject UserManager<BTUser> _UserManager
 @inject IProjectService _ProjectService
+@inject INotificationService _NotificationService
+@inject ITicketService _TicketService
 
 <!DOCTYPE html>
 <html lang="en">
@@ -45,6 +47,12 @@
     <!-- Responsive css-->
     <link rel="stylesheet" type="text/css" href="~/css/res">
 </head>
+
+@{
+    string userId = _UserManager.GetUserId(User);
+    List<Notification> notifications = (_NotificationService.GetNewNotificationsByUserIdAsync(userId)).Result.OrderByDescending(n=>n.Created).Take(5).ToList();
+}
+
 <body>
     <!-- Loader starts-->
     <div class="loader-wrapper">
@@ -96,43 +104,62 @@
                             </div>
                         </li>
                         <li class="onhover-dropdown">
-                            <div class="notification-box"><i data-feather="bell"></i><span class="dot-animated"></span></div>
+                            <div class="notification-box"><i data-feather="bell"></i>@if((notifications).Count() != 0){<span class="dot-animated"></span>}</div>
                             <ul class="notification-dropdown onhover-show-div">
                                 <li>
-                                    <p class="f-w-700 mb-0">You have 3 Notifications<span class="pull-right badge badge-primary badge-pill">4</span></p>
+                                    <p class="f-w-700 mb-0">You have @((notifications).Count()) Notifications<span class="pull-right badge badge-primary badge-pill">@((notifications).Count())</span></p>
                                 </li>
-                                <li class="noti-primary">
-                                    <div class="media">
-                                        <span class="notification-bg bg-light-primary"><i data-feather="activity"> </i></span>
-                                        <div class="media-body">
-                                            <p>Delivery processing </p><span>10 minutes ago</span>
+                                @foreach (Notification notification in notifications)
+                                {
+                                    <li class="noti-primary dropdown-item">
+                                        <div class="media">
+                                            <span class="notification-bg bg-light-primary"><i data-feather="activity"> </i></span>
+                                            <div class="media-body">
+                                                <a asp-controller="Notifications" asp-action="Details" asp-route-id="@notification.Id">
+                                                    <p style="font-size:smaller">@notification.Title: @((_TicketService.GetTicketByIdAsync(notification.TicketId!.Value, User.Identity!.GetCompanyId()).Result.Title))</p><span>@notification.Created.ToLocalTime()</span>
+                                                </a>
+                                            </div>
                                         </div>
-                                    </div>
-                                </li>
-                                <li class="noti-secondary">
-                                    <div class="media">
-                                        <span class="notification-bg bg-light-secondary"><i data-feather="check-circle"> </i></span>
-                                        <div class="media-body">
-                                            <p>Order Complete</p><span>1 hour ago</span>
+                                    </li>
+                                }
+                                @if(notifications.Count() == 0){
+                                    <li class="noti-primary dropdown-item">
+                                        <div class="media">
+                                            <span class="notification-bg bg-light-primary"><i data-feather="check-circle"></i></span>
+                                            <div class="media-body">
+                                                <a asp-controller="Notifications" asp-action="Index">
+                                                    <text>No New Notifications</text><br>
+                                                    <text>See All Notifications</text>
+                                                </a>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </li>
+                                }
+                                <li><a asp-controller="Notifications" asp-action="Index"></a></li>
+                                @*<li class="noti-secondary">
+                                <div class="media">
+                                <span class="notification-bg bg-light-secondary"><i data-feather="check-circle"> </i></span>
+                                <div class="media-body">
+                                <p>Order Complete</p><span>1 hour ago</span>
+                                </div>
+                                </div>
                                 </li>
                                 <li class="noti-success">
-                                    <div class="media">
-                                        <span class="notification-bg bg-light-success"><i data-feather="file-text"> </i></span>
-                                        <div class="media-body">
-                                            <p>Tickets Generated</p><span>3 hour ago</span>
-                                        </div>
-                                    </div>
+                                <div class="media">
+                                <span class="notification-bg bg-light-success"><i data-feather="file-text"> </i></span>
+                                <div class="media-body">
+                                <p>Tickets Generated</p><span>3 hour ago</span>
+                                </div>
+                                </div>
                                 </li>
                                 <li class="noti-danger">
-                                    <div class="media">
-                                        <span class="notification-bg bg-light-danger"><i data-feather="user-check"> </i></span>
-                                        <div class="media-body">
-                                            <p>Delivery Complete</p><span>6 hour ago</span>
-                                        </div>
-                                    </div>
-                                </li>
+                                <div class="media">
+                                <span class="notification-bg bg-light-danger"><i data-feather="user-check"> </i></span>
+                                <div class="media-body">
+                                <p>Delivery Complete</p><span>6 hour ago</span>
+                                </div>
+                                </div>
+                                </li>*@
                             </ul>
                         </li>
                         <li>
@@ -233,7 +260,10 @@
 </body>
 </html>
 
-@*
+@section Scripts{
+    }
+
+    @*
 <!DOCTYPE html>
 <html lang="en">
 <head>

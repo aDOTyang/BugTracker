@@ -247,7 +247,7 @@ namespace BugTracker.Controllers
                     return NotFound();
                 }
 
-                ViewData["DeveloperUser"] = new SelectList(await _ticketService.GetDevelopersByCompanyAsync(companyId), "Id", "FullName", ticket.DeveloperUser);
+                ViewData["DeveloperUser"] = new SelectList(await _ticketService.GetDevelopersByCompanyAsync(companyId), "Id", "FullName", ticket.DeveloperUserId);
                 ViewData["TicketStatusId"] = new SelectList(await _ticketService.GetTicketStatusesAsync(), "Id", "Name", ticket.TicketStatusId);
                 ViewData["TicketPriorityId"] = new SelectList(await _ticketService.GetTicketPrioritiesAsync(), "Id", "Name", ticket.TicketPriorityId);
                 ViewData["TicketTypeId"] = new SelectList(await _ticketService.GetTicketTypesAsync(), "Id", "Name", ticket.TicketTypeId);
@@ -262,7 +262,7 @@ namespace BugTracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ProjectId,TicketTypeId,TicketStatusId,TicketPriorityId,DeveloperUserId,SubmitterUserId,Title,Description,Created,Updated,Archived,ArchivedByProject")] Ticket ticket, string newDevId)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,ProjectId,TicketTypeId,TicketStatusId,TicketPriorityId,DeveloperUserId,SubmitterUserId,Title,Description,Created,Updated,Archived,ArchivedByProject")] Ticket ticket)
         {
             if (id != ticket.Id)
             {
@@ -285,12 +285,12 @@ namespace BugTracker.Controllers
                         ticket.TicketStatusId = (await _ticketService.GetTicketStatusesAsync()).FirstOrDefault(t => t.Name == nameof(BTTicketStatuses.Development))!.Id;
                     }
 
-                    if (!string.IsNullOrEmpty(ticket.DeveloperUserId))
-                    {
-                        await _ticketService.RemoveDeveloperAsync(ticket.Id, companyId);
-                    }
+                    //if (!string.IsNullOrEmpty(ticket.DeveloperUserId))
+                    //{
+                    //    await _ticketService.RemoveDeveloperAsync(ticket.Id, companyId);
+                    //}
 
-                    await _ticketService.AddDeveloperToTicketAsync(newDevId, ticket.Id, companyId);
+                    //await _ticketService.AddDeveloperToTicketAsync(newDevId, ticket.Id, companyId);
                     await _ticketService.UpdateTicketAsync(ticket);
                 }
                 catch (DbUpdateConcurrencyException)
@@ -307,9 +307,10 @@ namespace BugTracker.Controllers
 
                 Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id, companyId);
                 await _historyService.AddHistoryAsync(oldTicket!, newTicket, user.Id);
-
+                
                 // send Notification
                 BTUser? projectManager = await _projectService.GetProjectManagerAsync(ticket.ProjectId)!;
+
                 Notification notification = new()
                 {
                     NotificationTypeId = (await _notificationService.GetNotificationTypesAsync()).FirstOrDefault(n => n.Name == nameof(BTNotificationTypes.Ticket))!.Id,
@@ -318,7 +319,7 @@ namespace BugTracker.Controllers
                     Message = $"Ticket: {ticket.Title} was updated by {user.FullName}",
                     Created = DateTime.UtcNow,
                     SenderId = user.Id,
-                    RecipientId = projectManager.Id
+                    RecipientId = projectManager?.Id
                 };
 
                 if (projectManager != null)

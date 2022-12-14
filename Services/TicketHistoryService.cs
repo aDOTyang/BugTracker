@@ -137,11 +137,11 @@ namespace BugTracker.Services
                     {
                         TicketId = newTicket.Id,
                         PropertyName = "Developer",
-                        OldValue = oldTicket.DeveloperUser?.FullName ?? "Not Assigned",
+                        OldValue = oldTicket.DeveloperUser?.FullName ?? "Unassigned",
                         NewValue = newTicket.DeveloperUser?.FullName,
                         Created = DateTime.UtcNow,
                         UserId = userId,
-                        Description = $"New ticket developer: {newTicket.DeveloperUser!.FullName}"
+                        Description = $"New ticket developer: {newTicket.DeveloperUser?.FullName ?? "Unassigned"}"
 
                     };
                     await _context.TicketHistories.AddAsync(history);

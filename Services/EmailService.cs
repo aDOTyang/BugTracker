@@ -19,7 +19,7 @@ namespace BugTracker.Services
             // var emailSender = _mailSettings.EmailAddress ?? Environment.GetEnvironmentVariable("EmailAddress");
             // gather configuration data
             string? emailAddress = _mailSettings.EmailAddress ?? Environment.GetEnvironmentVariable("EmailAddress");
-            string? emailHost = _mailSettings.EmailHost ?? Environment.GetEnvironmentVariable("EmailHost")!;
+            string emailHost = _mailSettings.EmailHost ?? Environment.GetEnvironmentVariable("EmailHost")!;
             int emailPort = _mailSettings.EmailPort != 0 ? _mailSettings.EmailPort : int.Parse(Environment.GetEnvironmentVariable("EmailPort")!);
             string? emailPassword = _mailSettings.EmailPassword ?? Environment.GetEnvironmentVariable("EmailPassword");
 
@@ -44,7 +44,9 @@ namespace BugTracker.Services
             emailBody.HtmlBody = htmlMessage;
             newEmail.Body = emailBody.ToMessageBody();
 
+            // using statement cleans up after itself
             using SmtpClient smtpClient = new();
+
             try
             {
                 await smtpClient.ConnectAsync(emailHost, emailPort, SecureSocketOptions.StartTls);
