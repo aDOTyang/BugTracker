@@ -1,83 +1,68 @@
-﻿@model IEnumerable<BugTracker.Models.Notification>
+﻿@using BugTracker.Extensions
+@using BugTracker.Services.Interfaces
+@model IEnumerable<BugTracker.Models.Notification>
+@inject IProjectService _projectService;
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Message)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Created)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.HasBeenViewed)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NotificationType)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Tickets)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Projects)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Sender)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Recipient)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Message)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Created)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.HasBeenViewed)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NotificationType.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Tickets.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Projects.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Sender.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Recipient.Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="card custom-card">
+    <div class="card-body">
+        <h4>Your Notifications</h4>
+        <table class="table table-responsive table-hover">
+            <thead>
+                <tr>
+                    <th>
+                        Action Taken
+                    </th>
+                    <th>
+                        Updated
+                    </th>
+                    <th>
+                        Read?
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Tickets)
+                    </th>
+                    <th>
+                        Project Name
+                    </th>
+                    <th>
+                        Action Taken By
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Message)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Created)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.HasBeenViewed)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Tickets.Description)
+                        </td>
+                        <td>
+                            @((_projectService.GetProjectByIdAsync(item.Tickets.ProjectId, User.Identity.GetCompanyId()).Result).Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Sender.FullName)
+                        </td>
+                        <td class="text-center">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn ripple btn-secondary row mb-1">Details</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn ripple btn-danger row">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,72 +1,64 @@
-﻿@model BugTracker.Models.Notification
+﻿@using BugTracker.Extensions
+@using BugTracker.Services.Interfaces
+@model BugTracker.Models.Notification
+@inject IProjectService _projectService;
 
 @{
     ViewData["Title"] = "Details";
 }
-
-<h1>Details</h1>
-
-<div>
-    <h4>Notification</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Message)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Message)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Created)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Created)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.HasBeenViewed)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.HasBeenViewed)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NotificationType)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NotificationType.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Tickets)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Tickets.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Projects)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Projects.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Sender)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Sender.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Recipient)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Recipient.Id)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+<div class="row justify-content-center mt-5">
+    <div class="card p-3 rounded-3 box-shadow shadow-lg col-8">
+        <div class="card-body">
+            <h4>@Model.Tickets?.Title: @Html.DisplayFor(model=>model.Title)</h4>
+            <hr />
+            <div class="row">
+                <label class="col-sm-2 mg-b-0">
+                    Ticket Details:
+                </label>
+                <div class="col-sm-10 mg-t-5 mb-2">
+                    @Html.DisplayFor(model => model.Tickets.Description)
+                </div>
+                <label class="col-sm-2 mg-b-0">
+                    Project Name:
+                </label>
+                <div class="col-sm-10 mg-t-5 mb-2">
+                    @((_projectService.GetProjectByIdAsync(Model.Tickets.ProjectId, User.Identity.GetCompanyId()).Result).Name)
+                </div>
+                <label class="col-sm-2 mg-b-0">
+                    Project Details:
+                </label>
+                <div class="col-sm-10 mg-t-5 mb-2">
+                    @Html.DisplayFor(model => model.Tickets.Project.Description)
+                </div>
+                <label class="col-sm-2 mg-b-0">
+                    Action Taken:
+                </label>
+                <div class="col-sm-10 mg-t-5 mb-2">
+                    @Html.DisplayFor(model => model.Message)
+                </div>
+                <label class="col-sm-2 mg-b-0">
+                    Action Taken By:
+                </label>
+                <div class="col-sm-10 mg-t-5 mb-2">
+                    @Html.DisplayFor(model => model.Sender.FullName)
+                </div> 
+                <label class="col-sm-2 mg-b-0">
+                    Ticket Created:
+                </label>
+                <div class="col-sm-10 mg-t-5 mb-2">
+                    @Html.DisplayFor(model => model.Tickets!.Created)
+                </div>
+                <label class="col-sm-2 mg-b-0">
+                    Action Taken:
+                </label>
+                <div class="col-sm-10 mg-t-5 mb-2">
+                    @Html.DisplayFor(model => model.Created)
+                </div>
+            </div>
+            <div class="row justify-content-between mt-4">
+                <a asp-action="Edit" asp-route-id="@Model?.Id" class="col-3 btn ripple pd-x-30 btn-primary-light mg-r-5">Edit</a>
+                <a asp-action="Index" class="col-3 btn ripple btn-secondary pd-x-30">All Notifications</a>
+            </div>
+        </div>
+    </div>
 </div>

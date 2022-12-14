@@ -7,16 +7,19 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BugTracker.Data;
 using BugTracker.Models;
+using BugTracker.Services.Interfaces;
 
 namespace BugTracker.Controllers
 {
     public class NotificationsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly INotificationService _notificationService;
 
-        public NotificationsController(ApplicationDbContext context)
+        public NotificationsController(ApplicationDbContext context, INotificationService notificationService)
         {
             _context = context;
+            _notificationService = notificationService;
         }
 
         // GET: Notifications
@@ -41,6 +44,13 @@ namespace BugTracker.Controllers
                 .Include(n => n.Sender)
                 .Include(n => n.Tickets)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (!notification.HasBeenViewed)
+            {
+                notification.HasBeenViewed = true;
+                _notificationService.UpdateNotificationAsync(notification);
+            }
+
             if (notification == null)
             {
                 return NotFound();

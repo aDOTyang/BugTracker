@@ -51,6 +51,23 @@ namespace BugTracker.Services
             catch (Exception) { throw; }
         }
 
+        public async Task<List<Notification>> GetNewNotificationsByUserIdAsync(string userId)
+        {
+            try
+            {
+                List<Notification> notifications = new();
+
+                notifications = await _context.Notifications
+                                              .Where(n => n.SenderId == userId || n.RecipientId == userId)
+                                              .Where(n => n.HasBeenViewed == false)
+                                              .Include(n => n.Recipient)
+                                              .Include(n => n.Sender)
+                                              .ToListAsync();
+                return notifications;
+            }
+            catch (Exception) { throw; }
+        }
+
         public async Task<List<Notification>> GetNotificationsByUserIdAsync(string userId)
         {
             try
@@ -119,6 +136,20 @@ namespace BugTracker.Services
 
             }
             catch (Exception) { throw; }
+        }
+
+        public async Task UpdateNotificationAsync(Notification notification)
+        {
+            try
+            {
+                _context.Notifications.Update(notification);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }

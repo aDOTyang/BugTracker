@@ -2,6 +2,7 @@
 using BugTracker.Models;
 using BugTracker.Models.ViewModels;
 using BugTracker.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -23,6 +24,7 @@ namespace BugTracker.Controllers
             _userManager = userManager;
         }
 
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             if ((User.Identity?.IsAuthenticated)!.Value)
@@ -38,6 +40,7 @@ namespace BugTracker.Controllers
                 return View(viewModel);
             }
             return View();
+            //return RedirectToAction("EmptyIndex");
         }
 
         public IActionResult Privacy()
