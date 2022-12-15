@@ -1,26 +1,31 @@
 ﻿@model BugTracker.Models.Company
 @using BugTracker.Models.Enums
-@using BugTracker.Services.Interfaces;
+@using BugTracker.Services.Interfaces
 @using Microsoft.AspNetCore.Identity
-@inject IFileService _FileService;
-@inject IProjectService _ProjectService;
-@inject UserManager<BTUser> _UserManager;
+@inject IFileService _fileService
+@inject IProjectService _projectService
+@inject ITicketService _ticketService
+@inject UserManager<BTUser> _userManager
 
 @{
     ViewData["Title"] = "Details";
+    List<Project> projects = (await _projectService.GetAllProjectsByCompanyIdAsync(Model.Id)).Where(p=>p.Archived == false).ToList();
+    List<Ticket> tickets = (await _ticketService.GetAllTicketsByCompanyIdAsync(Model.Id)).Where(t => t.Archived == false && t.ArchivedByProject == false).ToList();
 }
-<div class="container">
-    <div class="card m-3 border border-1 border-dark rounded-3 shadow-lg">
-        <div class="row g-0">
+<div class="row justify-content-center mt-5">
+    <div class="card p-3 rounded-3 shadow-lg col-8">
+        <div class="card-body text-center">
             <h3 class="col-12 my-3 card-header">Company Name: @Model.Name</h3>
-            <div class="row card-body align-items-center">
-                <div class="col-3 text-center">
-                    <img src="@_FileService.ConvertByteArrayToFile(Model.ImageFileData!, Model.ImageFileType!,(int)DefaultImage.CompanyImage)" alt="Company Image">
+            <div class="row card-body align-items-center justify-content-center">
+                <div class="col-3">
+                    <img src="@(_fileService.ConvertByteArrayToFile(Model.ImageFileData!, Model.ImageFileType!,(int)DefaultImage.CompanyImage))" alt="Company Image">
                 </div>
-                <div class="col-6">
+                <div class="col-9">
                     <h4>@Model.Description</h4>
-                    <p><span>There are @Model.Projects.Count()</span> active Projects in this Company.<br>
-                    <span>There are @Model.Members.Count()</span> active Members in this Company.</p>
+                    <p><span>There are @projects.Count()</span> active Projects in this Company.<br />
+                    <span>There are @tickets.Count()</span> active Tickets in this Company.<br />
+                    <span>There are @Model.Members.Count()</span> Members in this Company.
+                    </p>
                 </div>
             </div>
         </div>
