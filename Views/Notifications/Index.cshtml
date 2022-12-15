@@ -7,30 +7,19 @@
     ViewData["Title"] = "Index";
 }
 
-<div class="card custom-card">
-    <div class="card-body">
+<div class="card p-3 rounded-3 box-shadow shadow-lg">
+    <div class="card-body text-center">
         <h4>Your Notifications</h4>
-        <table class="table table-responsive table-hover">
+        <div class="table table-responsive table-hover">
+        <table id="dTable">
             <thead>
                 <tr>
-                    <th>
-                        Action Taken
-                    </th>
-                    <th>
-                        Updated
-                    </th>
-                    <th>
-                        Read?
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Tickets)
-                    </th>
-                    <th>
-                        Project Name
-                    </th>
-                    <th>
-                        Action Taken By
-                    </th>
+                    <th class="text-center">Action Taken</th>
+                    <th class="text-center">Updated</th>
+                    <th class="text-center">Read?</th>
+                    <th class="text-center">@Html.DisplayNameFor(model => model.Tickets)</th>
+                    <th class="text-center">Project Name</th>
+                    <th class="text-center">Action Taken By</th>
                     <th></th>
                 </tr>
             </thead>
@@ -38,24 +27,12 @@
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Message)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Created)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.HasBeenViewed)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Tickets.Description)
-                        </td>
-                        <td>
-                            @((_projectService.GetProjectByIdAsync(item.Tickets.ProjectId, User.Identity.GetCompanyId()).Result).Name)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Sender.FullName)
-                        </td>
+                        <td>@Html.DisplayFor(modelItem => item.Message)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Created)</td>
+                        <td>@Html.DisplayFor(modelItem => item.HasBeenViewed)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Tickets.Description)</td>
+                        <td>@((_projectService.GetProjectByIdAsync(item.Tickets.ProjectId, User.Identity.GetCompanyId()).Result).Name)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Sender.FullName)</td>
                         <td class="text-center">
                             <a asp-action="Details" asp-route-id="@item.Id" class="btn ripple btn-secondary row mb-1">Details</a>
                             <a asp-action="Delete" asp-route-id="@item.Id" class="btn ripple btn-danger row">Delete</a>
@@ -64,5 +41,14 @@
                 }
             </tbody>
         </table>
+        </div>
     </div>
 </div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#dTable').DataTable();
+        });
+    </script>
+    }
