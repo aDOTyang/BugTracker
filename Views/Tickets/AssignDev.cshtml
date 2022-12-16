@@ -14,10 +14,9 @@
 }
 
 <div class="d-flex justify-content-center mt-5 flex-column align-items-center">
-    <h3 class="my-5">Assign Project Manager</h3>
-    <div class="card">
-        <div class="card-header">
-            <div class="card-title">@Model.Ticket.Title</div>
+    <div class="card mt-5 rounded-3 box-shadow shadow-lg">
+        <div class="card-header text-center">
+            <h5 class="card-title">Assign a Developer<br />To Ticket: <br />@Model.Ticket.Title</h5>
         </div>
         <div class="card-body">
             <form asp-controller="Tickets" asp-action="AssignDev" method="post" class="d-flex flex-column">
@@ -25,8 +24,10 @@
                 <select asp-items="Model.DevList" asp-for="DevId">
                     <option value="">Unassigned</option>
                 </select>
-                <button type="submit" class="btn btn-primary rounded-pill my-3">Assign</button>
-                <a asp-action="Details" asp-route-ticketId="@Model.Ticket.Id" class="btn btn-primary rounded-pill my-3">Project Details</a>
+                <button type="submit" class="btn btn-primary mt-5 mb-3">Assign</button>
+                <a asp-controller="Tickets" asp-action="Details" asp-route-ticketId="@Model.Ticket.Id" class="btn btn-primary-light my-3">Ticket Details</a>
+                <a asp-controller="Projects" asp-action="Details" asp-route-ticketId="@Model.Ticket.ProjectId" class="btn btn-primary-light my-3">Project Details</a>
+                <a asp-controller="Tickets" asp-action="Index" class="btn btn-secondary my-3">Cancel</a>
             </form>
         </div>
     </div>

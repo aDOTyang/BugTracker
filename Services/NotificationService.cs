@@ -59,7 +59,7 @@ namespace BugTracker.Services
 
                 notifications = await _context.Notifications
                                               .Where(n => n.SenderId == userId || n.RecipientId == userId)
-                                              .Where(n => n.HasBeenViewed == false)
+                                              .Where(n => n.HasBeenViewed == false && n.Tickets.Archived == false)
                                               .Include(n => n.Recipient)
                                               .Include(n => n.Sender)
                                               .ToListAsync();

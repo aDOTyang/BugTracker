@@ -105,7 +105,7 @@
                                             @*<span class="notification-bg bg-light-primary"><i data-feather="activity"></i></span>*@
                                             <div class="media-body">
                                                 <a asp-controller="Notifications" asp-action="Details" asp-route-id="@newNotification.Id">
-                                                    <p style="font-size:smaller">@newNotification.Title: @((_TicketService.GetTicketByIdAsync(newNotification.TicketId!.Value, User.Identity!.GetCompanyId()).Result.Title))</p><span>@newNotification.Created.ToLocalTime()</span>
+                                                    <p style="font-size:smaller">@newNotification.Title: @((_TicketService.GetTicketByIdAsync(newNotification.TicketId.Value, User.Identity.GetCompanyId())).Result.Title)</p><span>@newNotification.Created.ToLocalTime()</span>
                                                 </a>
                                             </div>
                                         </div>
