@@ -2,604 +2,110 @@
 @using BugTracker.Models.Enums
 @using BugTracker.Services.Interfaces;
 @using Microsoft.AspNetCore.Identity
-@inject IProjectService _ProjectService
-@inject ITicketService _TicketService
-@inject UserManager<BTUser> _UserManager
+@inject IProjectService _projectService
+@inject ITicketService _ticketService
+@inject IFileService _fileService
+@inject UserManager<BTUser> _userManager
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<div class="page-body">
-    <div class="container-fluid">
-        <div class="page-header">
-            <div class="row">
-                <div class="col-sm-6">
-                    <h3>project list</h3>
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                        <li class="breadcrumb-item">dashboard</li>
-                        <li class="breadcrumb-item active">project list</li>
-                    </ol>
-                </div>
-                <div class="col-sm-6">
-                    <!-- Bookmark Start-->
-                    <div class="bookmark">
-                        <ul>
-                            <li><a href="javascript:void(0)" data-container="body" data-bs-toggle="popover" data-placement="top" title="" data-original-title="Tables"><i data-feather="inbox"></i></a></li>
-                            <li><a href="javascript:void(0)" data-container="body" data-bs-toggle="popover" data-placement="top" title="" data-original-title="Chat"><i data-feather="message-square"></i></a></li>
-                            <li><a href="javascript:void(0)" data-container="body" data-bs-toggle="popover" data-placement="top" title="" data-original-title="Icons"><i data-feather="command"></i></a></li>
-                            <li><a href="javascript:void(0)" data-container="body" data-bs-toggle="popover" data-placement="top" title="" data-original-title="Learning"><i data-feather="layers"></i></a></li>
-                            <li>
-                                <a href="javascript:void(0)"><i class="bookmark-search" data-feather="star"></i></a>
-                                <form class="form-inline search-form">
-                                    <div class="form-group form-control-search">
-                                        <input type="text" placeholder="Search..">
-                                    </div>
-                                </form>
-                            </li>
-                        </ul>
-                    </div>
-                    <!-- Bookmark Ends-->
+<div class="container-fluid">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h3 class="mt-3">All Active Projects</h3>
+              @*<ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item">dashboard</li>
+                <li class="breadcrumb-item active">project list</li>
+                </ol>*@
+        </div>
+    </div>
+</div>
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row project-cards">
+        <div class="col-md-12 project-list">
+            <div class="">
+                <div class="row justify-content-between">
+                    @if(User.IsInRole("Admin") || User.IsInRole("ProjectManager"))    
+                    {<a asp-controller="Projects" asp-action="Create" class="btn btn-primary col-3">Create New Project</a>}
+                     <a asp-controller="Projects" asp-action="Unassigned" class="btn btn-info col-3">View Unassigned Projects Only</a>
                 </div>
             </div>
         </div>
-    </div>
-    <!-- Container-fluid starts-->
-    <div class="container-fluid">
-        <div class="row project-cards">
-            <div class="col-md-12 project-list">
-                <div class="card">
-                    <div class="row">
-                        <div class="col-md-6 p-0">
-                            <ul class="nav nav-tabs border-tab" id="top-tab" role="tablist">
-                                <li class="nav-item"><a class="nav-link active" id="top-home-tab" data-bs-toggle="tab" href="#top-home" role="tab" aria-controls="top-home" aria-selected="true"><i data-feather="target"></i>All</a></li>
-                                <li class="nav-item"><a class="nav-link" id="profile-top-tab" data-bs-toggle="tab" href="#top-profile" role="tab" aria-controls="top-profile" aria-selected="false"><i data-feather="info"></i>Doing</a></li>
-                                <li class="nav-item"><a class="nav-link" id="contact-top-tab" data-bs-toggle="tab" href="#top-contact" role="tab" aria-controls="top-contact" aria-selected="false"><i data-feather="check-circle"></i>Done</a></li>
-                            </ul>
-                        </div>
-                        <div class="col-md-6 p-0">
-                            <div class="form-group mb-0 me-0"></div><a class="btn btn-primary" href="projectcreate.html"> <i data-feather="plus-square"> </i>Create New Project</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-12">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="tab-content" id="top-tabContent">
-                            <div class="tab-pane fade show active" id="top-home" role="tabpanel" aria-labelledby="top-home-tab">
-                                <div class="row">
-                                    @foreach(Project project in Model) {
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="tab-content" id="top-tabContent">
+                        <div class="tab-pane fade show active" id="top-home" role="tabpanel" aria-labelledby="top-home-tab">
+                            <div class="row">
+                                @foreach (Project project in Model)
+                                {
                                     <div class="col-xxl-4 col-lg-6">
                                         <div class="project-box">
-                                            <span class="badge badge-primary">Doing</span>
-                                            <h6>Endless admin Design</h6>
-                                            <div class="media">
-                                                <img class="img-20 me-2 rounded-circle" src="../assets/images/user/3.jpg" alt="" data-original-title="" title="">
+                                            <span class="badge badge-primary">Priority: @project.ProjectPriority.Name</span>
+                                            <a asp-controller="Projects" asp-action="Details" asp-route-id="@project.Id"><h6 class="mt-3"><u>@project.Name</u></h6></a>
+                                            <div class="media mb-2">
+                                                @{
+                                                    BTUser? projectManager = await _projectService.GetProjectManagerAsync(project.Id);
+                                                }
+                                                <img class="img-30 me-2 rounded-circle" src="@if(projectManager != null){@_fileService.ConvertByteArrayToFile(projectManager.ImageFileData, projectManager.ImageFileType!,(int)DefaultImage.BTUserImage);}">
                                                 <div class="media-body">
-                                                    <p>Themeforest, australia</p>
+                                                    <p>
+                                                        @if (projectManager is null && User.IsInRole(nameof(BTRoles.Admin)))
+                                                        {
+                                                            <a asp-controller="Projects" asp-action="AssignPM" asp-route-id="@project.Id" class="btn btn-primary-light btn-sm">Assign PM</a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <text>Project Manager: @(projectManager?.FullName ?? "UnAssigned")</text>
+                                                        }
+                                                    </p>
                                                 </div>
                                             </div>
-                                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+                                            <p>@project.Description</p>
+                                            @*<p>@(new string (project.Description.Take(150).ToArray()))...</p>*@
                                             <div class="row details">
-                                                <div class="col-6"><span>Active Tickets:</span></div>
+                                                <div class="col-6"><u>Active Tickets:</u></div>
                                                 <div class="col-6 font-primary"> @project.Tickets.Where(t=>t.Archived == false).Count()</div>
                                                 <div class="col-6"> <span>Resolved Tickets:</span></div>
                                                 <div class="col-6 font-primary"> @project.Tickets.Where(t=>t.TicketStatus!.Name == nameof(BTTicketStatuses.Resolved)).Count()</div>
-                                                <div class="col-6"> <span>Total Ticket Comments</span></div>
+                                                <div class="col-6"> <span>Total Ticket Comments:</span></div>
                                                 <div class="col-6 font-primary"> @project.Tickets.Where(t=>t.Comments != null).Count()</div>
-                                            </div>
+                                            </div>          
+                                            <span>Project Members:</span>
                                             <div class="customers">
+                                                <ol>
+                                                    @foreach (BTUser member in project.Members)
+                                                    {
+                                                        <li class="d-inline-block">
+                                                            @member.FullName;
+                                                        </li>
+                                                    }
+                                                </ol>
+                                            </div><div class="customers">
                                                 <ul>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/3.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/5.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/1.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block ms-2">
-                                                        <p class="f-12">+10 More</p>
-                                                    </li>
+                                                    @foreach (BTUser member in project.Members)
+                                                    {
+                                                        <li class="d-inline-block"><img class="img-30 rounded-circle" src="@if(member != null){
+                                                    @_fileService.ConvertByteArrayToFile(member.ImageFileData, member.ImageFileType!,(int)DefaultImage.BTUserImage);}" alt="Project member image"></li>
+                                                    }
                                                 </ul>
                                             </div>
-                                            <div class="project-status mt-4">
+                                            @*<div class="project-status mt-4">
                                                 <div class="media mb-0">
-                                                    <p>70% </p>
+                                                    <p>Progress: 80% </p>
                                                     <div class="media-body text-end"><span>Done</span></div>
                                                 </div>
                                                 <div class="progress" style="height: 5px">
                                                     <div class="progress-bar-animated bg-primary progress-bar-striped" role="progressbar" style="width: 70%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </div>}
-                                </div>
-                            </div>
-                            <div class="tab-pane fade" id="top-profile" role="tabpanel" aria-labelledby="profile-top-tab">
-                                <div class="row">
-                                    <div class="col-xxl-4 col-lg-6">
-                                        <div class="project-box">
-                                            <span class="badge badge-primary">Doing</span>
-                                            <h6>Endless admin Design</h6>
-                                            <div class="media">
-                                                <img class="img-20 me-2 rounded-circle" src="../assets/images/user/3.jpg" alt="" data-original-title="" title="">
-                                                <div class="media-body">
-                                                    <p>Themeforest, australia</p>
-                                                </div>
-                                            </div>
-                                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-                                            <div class="row details">
-                                                <div class="col-6"><span>Issues </span></div>
-                                                <div class="col-6 font-primary">12 </div>
-                                                <div class="col-6"> <span>Resolved</span></div>
-                                                <div class="col-6 font-primary">5</div>
-                                                <div class="col-6"> <span>Comment</span></div>
-                                                <div class="col-6 font-primary">7</div>
-                                            </div>
-                                            <div class="customers">
-                                                <ul>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/3.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/5.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/1.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block ms-2">
-                                                        <p class="f-12">+10 More</p>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div class="project-status mt-4">
-                                                <div class="media mb-0">
-                                                    <p>70% </p>
-                                                    <div class="media-body text-end"><span>Done</span></div>
-                                                </div>
-                                                <div class="progress" style="height: 5px">
-                                                    <div class="progress-bar-animated bg-primary progress-bar-striped" role="progressbar" style="width: 70%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                            </div>
+                                            </div>*@
                                         </div>
                                     </div>
-                                    <div class="col-xxl-4 col-lg-6">
-                                        <div class="project-box">
-                                            <span class="badge badge-primary">Doing</span>
-                                            <h6>Universal admin Design</h6>
-                                            <div class="media">
-                                                <img class="img-20 me-2 rounded-circle" src="../assets/images/user/3.jpg" alt="" data-original-title="" title="">
-                                                <div class="media-body">
-                                                    <p>Envato, australia</p>
-                                                </div>
-                                            </div>
-                                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-                                            <div class="row details">
-                                                <div class="col-6"><span>Issues </span></div>
-                                                <div class="col-6 font-primary">24</div>
-                                                <div class="col-6"> <span>Resolved</span></div>
-                                                <div class="col-6 font-primary">24</div>
-                                                <div class="col-6"> <span>Comment</span></div>
-                                                <div class="col-6 font-primary">40</div>
-                                            </div>
-                                            <div class="customers">
-                                                <ul>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/3.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/5.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/1.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block ms-2">
-                                                        <p class="f-12">+3 More</p>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div class="project-status mt-4">
-                                                <div class="media mb-0">
-                                                    <p>100% </p>
-                                                    <div class="media-body text-end"><span>Done</span></div>
-                                                </div>
-                                                <div class="progress" style="height: 5px">
-                                                    <div class="progress-bar-animated bg-primary" role="progressbar" style="width: 100%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xxl-4 col-lg-6">
-                                        <div class="project-box">
-                                            <span class="badge badge-primary">Doing</span>
-                                            <h6>Poco admin Design</h6>
-                                            <div class="media">
-                                                <img class="img-20 me-2 rounded-circle" src="../assets/images/user/3.jpg" alt="" data-original-title="" title="">
-                                                <div class="media-body">
-                                                    <p>Envato, australia</p>
-                                                </div>
-                                            </div>
-                                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-                                            <div class="row details">
-                                                <div class="col-6"><span>Issues </span></div>
-                                                <div class="col-6 font-primary">40</div>
-                                                <div class="col-6"> <span>Resolved</span></div>
-                                                <div class="col-6 font-primary">40</div>
-                                                <div class="col-6"> <span>Comment</span></div>
-                                                <div class="col-6 font-primary">20</div>
-                                            </div>
-                                            <div class="customers">
-                                                <ul>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/3.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/5.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/1.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block ms-2">
-                                                        <p class="f-12">+2 More</p>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div class="project-status mt-4">
-                                                <div class="media mb-0">
-                                                    <p>100% </p>
-                                                    <div class="media-body text-end"><span>Done</span></div>
-                                                </div>
-                                                <div class="progress" style="height: 5px">
-                                                    <div class="progress-bar-animated bg-primary" role="progressbar" style="width: 100%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xxl-4 col-lg-6">
-                                        <div class="project-box">
-                                            <span class="badge badge-primary">Doing</span>
-                                            <h6>Universal admin Design</h6>
-                                            <div class="media">
-                                                <img class="img-20 me-2 rounded-circle" src="../assets/images/user/3.jpg" alt="" data-original-title="" title="">
-                                                <div class="media-body">
-                                                    <p>Envato, australia</p>
-                                                </div>
-                                            </div>
-                                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-                                            <div class="row details">
-                                                <div class="col-6"><span>Issues </span></div>
-                                                <div class="col-6 font-primary">24</div>
-                                                <div class="col-6"> <span>Resolved</span></div>
-                                                <div class="col-6 font-primary">24</div>
-                                                <div class="col-6"> <span>Comment</span></div>
-                                                <div class="col-6 font-primary">40</div>
-                                            </div>
-                                            <div class="customers">
-                                                <ul>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/3.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/5.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/1.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block ms-2">
-                                                        <p class="f-12">+3 More</p>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div class="project-status mt-4">
-                                                <div class="media mb-0">
-                                                    <p>100% </p>
-                                                    <div class="media-body text-end"><span>Done</span></div>
-                                                </div>
-                                                <div class="progress" style="height: 5px">
-                                                    <div class="progress-bar-animated bg-primary" role="progressbar" style="width: 100%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xxl-4 col-lg-6">
-                                        <div class="project-box">
-                                            <span class="badge badge-primary">Doing</span>
-                                            <h6>Endless admin Design</h6>
-                                            <div class="media">
-                                                <img class="img-20 me-2 rounded-circle" src="../assets/images/user/3.jpg" alt="" data-original-title="" title="">
-                                                <div class="media-body">
-                                                    <p>Themeforest, australia</p>
-                                                </div>
-                                            </div>
-                                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-                                            <div class="row details">
-                                                <div class="col-6"><span>Issues </span></div>
-                                                <div class="col-6 font-primary">12 </div>
-                                                <div class="col-6"> <span>Resolved</span></div>
-                                                <div class="col-6 font-primary">5</div>
-                                                <div class="col-6"> <span>Comment</span></div>
-                                                <div class="col-6 font-primary">7</div>
-                                            </div>
-                                            <div class="customers">
-                                                <ul>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/3.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/5.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/1.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block ms-2">
-                                                        <p class="f-12">+10 More</p>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div class="project-status mt-4">
-                                                <div class="media mb-0">
-                                                    <p>70% </p>
-                                                    <div class="media-body text-end"><span>Done</span></div>
-                                                </div>
-                                                <div class="progress" style="height: 5px">
-                                                    <div class="progress-bar-animated bg-primary progress-bar-striped" role="progressbar" style="width: 70%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xxl-4 col-lg-6">
-                                        <div class="project-box">
-                                            <span class="badge badge-primary">Doing</span>
-                                            <h6>Poco admin Design</h6>
-                                            <div class="media">
-                                                <img class="img-20 me-2 rounded-circle" src="../assets/images/user/3.jpg" alt="" data-original-title="" title="">
-                                                <div class="media-body">
-                                                    <p>Envato, australia</p>
-                                                </div>
-                                            </div>
-                                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-                                            <div class="row details">
-                                                <div class="col-6"><span>Issues </span></div>
-                                                <div class="col-6 font-primary">40</div>
-                                                <div class="col-6"> <span>Resolved</span></div>
-                                                <div class="col-6 font-primary">40</div>
-                                                <div class="col-6"> <span>Comment</span></div>
-                                                <div class="col-6 font-primary">20</div>
-                                            </div>
-                                            <div class="customers">
-                                                <ul>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/3.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/5.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/1.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block ms-2">
-                                                        <p class="f-12">+2 More</p>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div class="project-status mt-4">
-                                                <div class="media mb-0">
-                                                    <p>100% </p>
-                                                    <div class="media-body text-end"><span>Done</span></div>
-                                                </div>
-                                                <div class="progress" style="height: 5px">
-                                                    <div class="progress-bar-animated bg-primary" role="progressbar" style="width: 100%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="tab-pane fade" id="top-contact" role="tabpanel" aria-labelledby="contact-top-tab">
-                                <div class="row">
-                                    <div class="col-xxl-4 col-lg-6">
-                                        <div class="project-box">
-                                            <span class="badge badge-secondary">Done</span>
-                                            <h6>Endless admin Design</h6>
-                                            <div class="media">
-                                                <img class="img-20 me-2 rounded-circle" src="../assets/images/user/3.jpg" alt="" data-original-title="" title="">
-                                                <div class="media-body">
-                                                    <p>Themeforest, australia</p>
-                                                </div>
-                                            </div>
-                                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-                                            <div class="row details">
-                                                <div class="col-6"><span>Issues </span></div>
-                                                <div class="col-6 font-secondary">12 </div>
-                                                <div class="col-6"> <span>Resolved</span></div>
-                                                <div class="col-6 font-secondary">5</div>
-                                                <div class="col-6"> <span>Comment</span></div>
-                                                <div class="col-6 font-secondary">7</div>
-                                            </div>
-                                            <div class="customers">
-                                                <ul>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/3.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/5.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/1.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block ms-2">
-                                                        <p class="f-12">+10 More</p>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div class="project-status mt-4">
-                                                <div class="media mb-0">
-                                                    <p>70% </p>
-                                                    <div class="media-body text-end"><span>Done</span></div>
-                                                </div>
-                                                <div class="progress" style="height: 5px">
-                                                    <div class="progress-bar-animated bg-secondary progress-bar-striped" role="progressbar" style="width: 70%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xxl-4 col-lg-6">
-                                        <div class="project-box">
-                                            <span class="badge badge-secondary">Done</span>
-                                            <h6>Universal admin Design</h6>
-                                            <div class="media">
-                                                <img class="img-20 me-2 rounded-circle" src="../assets/images/user/3.jpg" alt="" data-original-title="" title="">
-                                                <div class="media-body">
-                                                    <p>Envato, australia</p>
-                                                </div>
-                                            </div>
-                                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-                                            <div class="row details">
-                                                <div class="col-6"><span>Issues </span></div>
-                                                <div class="col-6 font-secondary">24</div>
-                                                <div class="col-6"> <span>Resolved</span></div>
-                                                <div class="col-6 font-secondary">24</div>
-                                                <div class="col-6"> <span>Comment</span></div>
-                                                <div class="col-6 font-secondary">40</div>
-                                            </div>
-                                            <div class="customers">
-                                                <ul>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/3.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/5.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/1.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block ms-2">
-                                                        <p class="f-12">+3 More</p>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div class="project-status mt-4">
-                                                <div class="media mb-0">
-                                                    <p>100% </p>
-                                                    <div class="media-body text-end"><span>Done</span></div>
-                                                </div>
-                                                <div class="progress" style="height: 5px">
-                                                    <div class="progress-bar-animated bg-secondary" role="progressbar" style="width: 100%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xxl-4 col-lg-6">
-                                        <div class="project-box">
-                                            <span class="badge badge-secondary">Done</span>
-                                            <h6>Poco admin Design</h6>
-                                            <div class="media">
-                                                <img class="img-20 me-2 rounded-circle" src="../assets/images/user/3.jpg" alt="" data-original-title="" title="">
-                                                <div class="media-body">
-                                                    <p>Envato, australia</p>
-                                                </div>
-                                            </div>
-                                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-                                            <div class="row details">
-                                                <div class="col-6"><span>Issues </span></div>
-                                                <div class="col-6 font-secondary">40</div>
-                                                <div class="col-6"> <span>Resolved</span></div>
-                                                <div class="col-6 font-secondary">40</div>
-                                                <div class="col-6"> <span>Comment</span></div>
-                                                <div class="col-6 font-secondary">20</div>
-                                            </div>
-                                            <div class="customers">
-                                                <ul>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/3.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/5.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/1.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block ms-2">
-                                                        <p class="f-12">+2 More</p>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div class="project-status mt-4">
-                                                <div class="media mb-0">
-                                                    <p>100% </p>
-                                                    <div class="media-body text-end"><span>Done</span></div>
-                                                </div>
-                                                <div class="progress" style="height: 5px">
-                                                    <div class="progress-bar-animated bg-secondary" role="progressbar" style="width: 100%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xxl-4 col-lg-6">
-                                        <div class="project-box">
-                                            <span class="badge badge-secondary">Done</span>
-                                            <h6>Universal admin Design</h6>
-                                            <div class="media">
-                                                <img class="img-20 me-2 rounded-circle" src="../assets/images/user/3.jpg" alt="" data-original-title="" title="">
-                                                <div class="media-body">
-                                                    <p>Envato, australia</p>
-                                                </div>
-                                            </div>
-                                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-                                            <div class="row details">
-                                                <div class="col-6"><span>Issues </span></div>
-                                                <div class="col-6 font-secondary">24</div>
-                                                <div class="col-6"> <span>Resolved</span></div>
-                                                <div class="col-6 font-secondary">24</div>
-                                                <div class="col-6"> <span>Comment</span></div>
-                                                <div class="col-6 font-secondary">40</div>
-                                            </div>
-                                            <div class="customers">
-                                                <ul>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/3.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/5.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/1.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block ms-2">
-                                                        <p class="f-12">+3 More</p>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div class="project-status mt-4">
-                                                <div class="media mb-0">
-                                                    <p>100% </p>
-                                                    <div class="media-body text-end"><span>Done</span></div>
-                                                </div>
-                                                <div class="progress" style="height: 5px">
-                                                    <div class="progress-bar-animated bg-secondary" role="progressbar" style="width: 100%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xxl-4 col-lg-6">
-                                        <div class="project-box">
-                                            <span class="badge badge-primary">Done</span>
-                                            <h6>Endless admin Design</h6>
-                                            <div class="media">
-                                                <img class="img-20 me-2 rounded-circle" src="../assets/images/user/3.jpg" alt="" data-original-title="" title="">
-                                                <div class="media-body">
-                                                    <p>Themeforest, australia</p>
-                                                </div>
-                                            </div>
-                                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-                                            <div class="row details">
-                                                <div class="col-6"><span>Issues </span></div>
-                                                <div class="col-6 font-secondary">12 </div>
-                                                <div class="col-6"> <span>Resolved</span></div>
-                                                <div class="col-6 font-secondary">5</div>
-                                                <div class="col-6"> <span>Comment</span></div>
-                                                <div class="col-6 font-secondary">7</div>
-                                            </div>
-                                            <div class="customers">
-                                                <ul>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/3.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/5.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/1.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block ms-2">
-                                                        <p class="f-12">+10 More</p>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div class="project-status mt-4">
-                                                <div class="media mb-0">
-                                                    <p>70% </p>
-                                                    <div class="media-body text-end"><span>Done</span></div>
-                                                </div>
-                                                <div class="progress" style="height: 5px">
-                                                    <div class="progress-bar-animated bg-secondary progress-bar-striped" role="progressbar" style="width: 70%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xxl-4 col-lg-6">
-                                        <div class="project-box">
-                                            <span class="badge badge-secondary">Done</span>
-                                            <h6>Poco admin Design</h6>
-                                            <div class="media">
-                                                <img class="img-20 me-2 rounded-circle" src="../assets/images/user/3.jpg" alt="" data-original-title="" title="">
-                                                <div class="media-body">
-                                                    <p>Envato, australia</p>
-                                                </div>
-                                            </div>
-                                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-                                            <div class="row details">
-                                                <div class="col-6"><span>Issues </span></div>
-                                                <div class="col-6 font-secondary">40</div>
-                                                <div class="col-6"> <span>Resolved</span></div>
-                                                <div class="col-6 font-secondary">40</div>
-                                                <div class="col-6"> <span>Comment</span></div>
-                                                <div class="col-6 font-secondary">20</div>
-                                            </div>
-                                            <div class="customers">
-                                                <ul>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/3.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/5.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block"><img class="img-30 rounded-circle" src="../assets/images/user/1.jpg" alt="" data-original-title="" title=""></li>
-                                                    <li class="d-inline-block ms-2">
-                                                        <p class="f-12">+2 More</p>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div class="project-status mt-4">
-                                                <div class="media mb-0">
-                                                    <p>100% </p>
-                                                    <div class="media-body text-end"><span>Done</span></div>
-                                                </div>
-                                                <div class="progress" style="height: 5px">
-                                                    <div class="progress-bar-animated bg-secondary" role="progressbar" style="width: 100%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                }
                             </div>
                         </div>
                     </div>
@@ -607,10 +113,8 @@
             </div>
         </div>
     </div>
-    <!-- Container-fluid Ends-->
 </div>
-
-
+<!-- Container-fluid Ends-->
 @*
 <h1>All Projects</h1>
 @if (User.IsInRole("Admin") || User.IsInRole("ProjectManager"))

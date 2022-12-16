@@ -6,10 +6,9 @@
 }
 
 <div class="d-flex justify-content-center mt-5 flex-column align-items-center">
-    <h3 class="my-5">Assign Project Manager</h3>
-    <div class="card">
-        <div class="card-header">
-            <div class="card-title">@Model.Project.Name</div>
+    <div class="card mt-5 rounded-3 box-shadow shadow-lg">
+        <div class="card-header text-center">
+            <h5 class="card-title">Assign Project Manager<br /> To Project:<br />@Model.Project.Name</h5>
         </div>
         <div class="card-body">
             <form asp-action="AssignPM" method="post" class="d-flex flex-column">
@@ -17,8 +16,9 @@
                 <select asp-items="Model.PMList" asp-for="PMId">
                     <option value="">Unassigned</option>
                 </select>
-                <button type="submit" class="btn btn-primary rounded-pill my-3">Assign</button>
-                <a asp-action="Details" asp-route-id="@Model.Project.Id" class="btn btn-primary rounded-pill my-3">Project Details</a>
+                <button type="submit" class="btn btn-primary mt-5 mb-3">Assign</button>
+                <a asp-action="Details" asp-route-id="@Model.Project.Id" class="btn btn-primary-light my-3">Project Details</a>
+                <a asp-controller="Projects" asp-action="Index" class="btn btn-secondary my-3">Cancel</a>
             </form>
         </div>
     </div>

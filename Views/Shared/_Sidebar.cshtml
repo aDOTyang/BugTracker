@@ -132,14 +132,7 @@
                     <li><a href="email_compose.html">Compose</a></li>
                     </ul>
                     </li>*@
-                            <li class="dropdown">
-                                <a class="nav-link menu-title" href="javascript:void(0)"><i data-feather="users"></i><span>Users</span></a>
-                                <ul class="nav-submenu menu-content">
-                                    <li><a href="user-profile.html">Users Profile</a></li>
-                                    <li><a href="edit-profile.html">Users Edit</a></li>
-                                    <li><a href="user-cards.html">Users Cards</a></li>
-                                </ul>
-                            </li>
+                            <li><a asp-area="Identity" asp-page="/Account/Manage/Index" class="nav-link menu-title link-nav">Manage Profile</a></li>
                         }
                     }
                     @* <li class="dropdown"><a class="nav-link menu-title link-nav" href="contacts.html"><i data-feather="list"></i><span>Contacts</span></a></li>

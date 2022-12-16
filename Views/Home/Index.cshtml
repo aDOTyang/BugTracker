@@ -11,6 +11,7 @@
 @inject IRolesService _rolesService
 @inject IProjectService _projectService
 @inject ITicketService _ticketService
+@inject IFileService _fileService
 
 @{
     ViewData["Title"] = "Home Page";
@@ -76,7 +77,7 @@
                         <div class="card-body text-center">
                             <div class="table-responsive table-hover">
                                 <h6><u>Ticket Summary</u></h6>
-                                <table id="dTable" data-page-length="5">
+                                <table id="tTable" data-page-length="3">
                                     <thead>
                                         <tr>
                                             <th class="text-center">Title</th>
@@ -146,6 +147,69 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-xl-12 col-md-6 col-sm-12 box-col-6 des-xl-25 rate-sec">
+                    <div class="card card-primary">
+                        <div class="card-body text-center">
+                            <div class="table-responsive table-hover">
+                                <h6><u>Project Summary</u></h6>
+                                <table id="pTable" data-page-length="3">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Project Image</th>
+                                            <th class="text-center">Title</th>
+                                            <th class="text-center">Description</th>
+                                            <th class="text-center">Project Start Date</th>
+                                            <th class="text-center">Project End Date</th>
+                                            <th class="text-center">Project Priority</th>
+                                            <th class="text-center">Project Manager</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-center">
+                                        @foreach (var item in Model.Projects!)
+                                        {
+                                            <tr>
+                                                <td><img id="projectImage" class="img-fluid img-90 rounded-circle" src="@_fileService.ConvertByteArrayToFile(item.ImageFileData!, item.ImageFileType!, (int)DefaultImage.ProjectImage)" /></td>
+                                                <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                                                <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                                                <td>@Html.DisplayFor(modelItem => item.Created)</td>
+                                                <td>@Html.DisplayFor(modelItem => item.EndDate)</td>
+                                                <td>@Html.DisplayFor(modelItem => item.ProjectPriority.Name)</td>
+                                                <td>
+                                                    @{
+                                                        BTUser? projectManager = await _projectService.GetProjectManagerAsync(item.Id);
+                                                    }
+                                                    @if (projectManager is null && User.IsInRole(nameof(BTRoles.Admin)))
+                                                    {
+                                                        <a asp-controller="Projects" asp-action="AssignPM" asp-route-id="@item.Id" class="btn btn-primary-light">Assign PM</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <text>@(projectManager?.FullName ?? "UnAssigned")</text>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info mb-2">Details</a>
+                                                    @if (User.IsInRole("Admin") || User.IsInRole("ProjectManager"))
+                                                    {
+                                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary mb-2 px-3">Edit</a>
+                                                    }
+                                                    @if (User.IsInRole("Admin"))
+                                                    {
+                                                        <form asp-controller="Projects" asp-action="Archive" method="post">
+                                                            <input type="hidden" asp-for="@item.Id" name="id" />
+                                                            <input type="submit" class="btn btn-warning px-3" value="Archive" />
+                                                        </form>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -154,7 +218,13 @@
 @section Scripts{
     <script>
         $(document).ready(function () {
-            $('#dTable').DataTable();
+            $('#tTable').DataTable();
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#pTable').DataTable();
         });
     </script>
     }
