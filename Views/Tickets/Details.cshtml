@@ -13,39 +13,34 @@
     <div class="container-fluid" style="font-weight:bold">
         <div class="row justify-content-center g-2">
             <div class="col-md-12 col">
-                <div class="row col-cols-2 mt-3 bg-secondary rounded-3 justify-content-center">
+                <div class="row col-cols-2 mt-3 rounded-3 justify-content-center">
                     <div class="card col m-2 p-2 rounded-3 box-shadow shadow-lg">
                         <div class="card-body">
                             <h5><u>Ticket Name:</u> @Model.Title</h5>
-                            <p><u>Ticket Description:</u> @Model.Description</p><hr />
+                            <h5><u>Ticket Description:</u> @Model.Description</h5><hr />
                             <div class="progress-container progress-info m-b-25">
                                 <a asp-controller="Projects" asp-action="Details" asp-route-id="@Model.Project!.Id"><h5><u>Project Information:</u> @Model.Project!.Name</h5></a>
-                                <span style="font-size:small">@Model.Project!.Description</span>
-                                @*<div class="progress">
-                                <div class="progress-bar" role="progressbar" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" style="width: percent%;">
-                                <span class="progress-value">percent%</span>
-                                </div>
-                                </div>*@
+                                <h6>@Model.Project!.Description</h6>
                             </div>
                         </div>
                     </div>
                     <div class="card col m-2 p-2 rounded-3 box-shadow shadow-lg">
                         <div class="card-body">
                             <ul class="list-unstyled">
-                                <li><u>Ticket Created:</u> @Model.Created</li>
-                                <li><u>Project Deadline:</u> @Model.Project.EndDate</li>
-                                <li><u>Ticket Type:</u> @Model.TicketType!.Name</li>
-                                <li><u>Ticket Priority:</u> @Model.TicketPriority!.Name</li>
-                                <li><u>Ticket Status:</u> @Model.TicketStatus!.Name</li>
+                                <li><h6><u>Ticket Created:</u> @Model.Created</h6></li>
+                                <li><h6><u>Project Deadline:</u> @Model.Project.EndDate</h6></li>
+                                <li><h6><u>Ticket Type:</u> @Model.TicketType!.Name</h6></li>
+                                <li><h6><u>Ticket Priority:</u> @Model.TicketPriority!.Name</h6></li>
+                                <li><h6><u>Ticket Status:</u> @Model.TicketStatus!.Name</h6></li>
                             </ul>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-8 col col-cols-2 mt-2">
-                <div class="col m-2 p-2 rounded-3 box-shadow shadow-lg">
-                    <div class="bg-primary p-1 rounded-3">
-                        <div class="card m-2 p-2 rounded-3 box-shadow shadow-lg">
+                <div class="col">
+                    <div class="p-1 rounded-3">
+                        <div class="card rounded-3 box-shadow shadow-lg">
                             <div class="card-header">
                                 <h2>Comments</h2>
                             </div>
@@ -56,7 +51,7 @@
                                     <form asp-controller="TicketComments" asp-action="Create" method="post">
                                         <input placeholder="Comment" name="comment">
                                         <input type="hidden" asp-for="@Model.Id" name="ticketId">
-                                        <input class="btn btn-primary rounded-pill" type="submit" value="Add Comment">
+                                        <input class="btn btn-primary" type="submit" value="Add Comment">
                                     </form>
                                 }
                                 <hr />
@@ -80,29 +75,32 @@
                         </div>
                     </div>
                 </div>
-                <div class="col m-2 p-2 rounded-3 box-shadow shadow-lg">
-                    <div class="bg-primary p-1 rounded-3">
-                        <div class="card m-2 p-2 rounded-3 box-shadow shadow-lg">
+                <div class="col">
+                    <div class="p-1 rounded-3">
+                        <div class="card rounded-3 box-shadow shadow-lg">
                             <div class="card-header">
                                 <h2>Attachments</h2>
                             </div>
                             <div class="card-body" style="overflow-y:auto;height:300px;">
                                 <div class="row clearfix">
                                     <div>
-                                        <form asp-action="AddTicketAttachment" asp-controller="Tickets" enctype="multipart/form-data" method="post">
-                                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                                            <input type="hidden" asp-for="@Model.Id" name="ticketId" />
-                                            <div class="media-body ml-3">
-                                                <label class="">
-                                                    Description
-                                                    <input asp-for="@Model.Attachments.FirstOrDefault()!.Description" type="text" class="form-control bg-light" name="description" rows="5"/>
-                                                </label><br />
-                                                <label class="btn btn-outline-primary btn-sm">
-                                                    <input asp-for="@Model.Attachments.FirstOrDefault()!.FormFile" type="file" class="form-control-file" />
-                                                </label>
-                                                <button type="submit" class="btn btn-outline-secondary btn-sm md-btn-flat">Submit</button>
-                                            </div>
-                                        </form>
+                                        @if (User.IsInRole("Admin") || User.IsInRole("ProjectManager") || (await _UserManager.GetUserAsync(User)).Id == Model.DeveloperUserId || (await _UserManager.GetUserAsync(User)).Id == Model.SubmitterUserId)
+                                        {
+                                            <form asp-action="AddTicketAttachment" asp-controller="Tickets" enctype="multipart/form-data" method="post">
+                                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                                <input type="hidden" asp-for="@Model.Id" name="ticketId" />
+                                                <div class="media-body ml-3">
+                                                    <label class="">
+                                                        Description
+                                                        <input asp-for="@Model.Attachments.FirstOrDefault()!.Description" type="text" class="form-control bg-light" name="description" rows="5" />
+                                                    </label><br />
+                                                    <label class="btn btn-outline-primary btn-sm">
+                                                        <input asp-for="@Model.Attachments.FirstOrDefault()!.FormFile" type="file" class="form-control-file" />
+                                                    </label>
+                                                    <button type="submit" class="btn btn-outline-secondary btn-sm md-btn-flat">Submit</button>
+                                                </div>
+                                            </form>
+                                        }
                                     </div>
                                 </div>
                                 <hr />
@@ -135,9 +133,9 @@
                 </div>
             </div>
             <div class="col-md-4 col mt-2">
-                <div class="col m-2 p-2 rounded-3 box-shadow shadow-lg">
-                    <div class="bg-secondary p-1 rounded-3">
-                        <div class="card m-2 p-2 rounded-3 box-shadow shadow-lg">
+                <div class="col">
+                    <div class="p-1 rounded-3">
+                        <div class="card rounded-3 box-shadow shadow-lg">
                             <div class="card-header">
                                 <h2>History</h2>
                                 <hr />
@@ -181,9 +179,10 @@
 <div class="mt-3 row">
     <form asp-controller="Tickets" asp-action="Edit" asp-route-id="@Model.Id">
         <input type="hidden" asp-for="@Model.Id" name="ticketId" />
-        <div class="row justify-content-between"><input type="submit" value="Edit" class="col-2 btn btn-primary mb-4 mx-4" />
+        <div class="row justify-content-between">
+            <input type="submit" value="Edit" class="col-2 btn btn-primary mb-4 mx-4" />
             <a asp-action="Index" class="col-2 btn btn-secondary mb-4 mx-4">Back to List</a>
         </div>
     </form>
-    
+
 </div>

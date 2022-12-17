@@ -64,14 +64,14 @@
                                 <label asp-for="Input.Email" class="form-label">Email Address</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="icon-email"></i></span>
-                                    <input asp-for="Input.Email" class="form-control" type="email" required="" placeholder="Test@gmail.com" autocomplete="username" aria-required="true">
+                                    <input asp-for="Input.Email" class="form-control" type="email" placeholder="email@gmail.com" autocomplete="username" aria-required="true">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label>Password</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="icon-lock"></i></span>
-                                    <input asp-for="Input.Password" class="form-control" type="password" required="" placeholder="*********" autocomplete="current-password" aria-required="true">
+                                    <input asp-for="Input.Password" class="form-control" type="password" placeholder="*********" autocomplete="current-password" aria-required="true">
                                     <div class="show-hide"><span class="show"></span></div>
                                 </div>
                             </div>
@@ -87,6 +87,9 @@
                             </div>
                             <div>
                                 <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="w-100 btn btn-primary-light btn-block mt-3">Register A New Company</a>
+                            </div>
+                            <div>
+                                <button class="w-100 btn btn-secondary btn-block mt-3" type="submit" name="demoLoginEmail" value="DemoLoginEmail">Demo Admin Login</button>
                             </div>
                         </form>
                     </div>
@@ -117,5 +120,6 @@
 </body>
 
 @section Scripts {
-    @*    <partial name="_ValidationScriptsPartial" />*@
+    <partial name="_ValidationScriptsPartial" />
     }
+    

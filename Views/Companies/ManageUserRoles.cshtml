@@ -1,36 +1,143 @@
-﻿@model IEnumerable<ManageUserRolesViewModel>
+﻿@namespace BugTracker
+@model IEnumerable<ManageUserRolesViewModel>
 
-<div class="row">
-    <h2 class="m-t-0 h3"><b>Manage Member Roles </b></h2>
-    @foreach (var viewModel in Model)
-    {
-        <div class="row">
-            <div class="card col-4 m-3">
-                <div class="card-body">
-                    <p class="text-muted font-13 m-b-30">
-                        This form displays the current roles assigned to the user: <strong class="text-info">@viewModel.BTUser!.FullName</strong>.
-                        Use the dropdown to select the roles this user should be assigned.
-                        Once roles are selected, click "Assign Roles" to submit the form.
-                    </p>
-                    <hr />
-                    <form asp-action="ManageUserRoles" asp-controller="Companies" method=post>
-                        <input type="hidden" asp-for="@viewModel.BTUser.Id" />
+@using BugTracker.Extensions
+@using BugTracker.Models
+@using BugTracker.Models.Enums
+@using BugTracker.Models.ViewModels
+@using BugTracker.Services.Interfaces
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<BTUser> _userManager
+@inject IRolesService _rolesService
+@inject IProjectService _projectService
+@inject ITicketService _ticketService
+@inject IFileService _fileService
+
+@* can replace table w/ individual cards & singular-role dropdown selectlist. use tag cloud jquery from blog to enable search functionality *@
+
+@*@foreach (var viewModel in Model)
+{
+    <div class="container-fluid">
+        <div class="row align-items-center">
+            <div class="col-4 bg-secondary rounded-3 m-2 p-2">
+                <div class="card rounded-3">
+                    <h4 class="mt-3 text-center">Manage Role for @viewModel.BTUser.FullName</h4>
+                    <div class="card-body">
                         <div class="row">
-                            <div class="col-6">
-                                <div class="form-group">
-                                    <label asp-for="@viewModel.Roles" class="custom-label"> Roles for @viewModel.BTUser.FullName </label>
-                                    <select asp-for="@viewModel.SelectedRoles" class="form-control" asp-items="@viewModel.Roles">
-                                    </select>
-                                    <hr />
+                            <form asp-action="ManageUserRoles" asp-controller="Companies" asp-for="@viewModel.BTUser.Id" method="post">
+                                <input type="hidden" asp-for="@viewModel.BTUser.Id" />
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <select asp-for="@viewModel.SelectedRole" class="form-control" asp-items="@ViewBag.UserRole">
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="submit" value="Assign Role" class="btn btn-primary" />
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="form-group">
-                                    <input type="submit" value="Assign Role" class="btn btn-info" />
-                                </div>
-                            </div>
+                            </form>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
-    }
+    </div>
+}*@
+
+<div class="col-xl-12 col-md-12 col-sm-12 box-col-12 des-xl-25 rate-sec">
+    <div class="card">
+        <div class="card-body text-center">
+            <div class="table-responsive table-hover">
+                <h6><u>User Summary</u></h6>
+                <p class="text-muted font-13 m-b-30">
+                    This table displays the current roles assigned to each user in your company.
+                    Use the list of available roles to select the role(s) this user should be assigned.<br />
+                    Once the desired role(s) are selected, click "Assign Roles" to submit the form.
+                </p>
+                <table id="uTable" class="col-12 align-items-center">
+                    <thead>
+                        <tr>
+                            <th class="text-center col-1">User Name</th>
+                            <th class="text-center col-8">Assigned Projects</th>
+                            <th class="text-center col-2">Current User Role</th>
+                            <th class="col-1">Assign Role</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-center">
+                        @foreach (var viewModel in Model)
+                        {
+                            <tr>
+                                <td>@Html.DisplayFor(modelItem => viewModel.BTUser.FullName)</td>
+                                <td>
+                                    @{
+                                        List<Project>? userProjects = (await _projectService.GetUserProjectsAsync(viewModel.BTUser.Id))?.ToList();
+                                    }
+                                    @foreach (Project userProject in userProjects)
+                                    {
+                                        @if (userProjects.Count() > 1)
+                                        {
+                                            @(userProject.Name)
+                                            ;
+                                            @(", ")
+                                            ;
+                                        }
+                                        else if (userProjects.Count() == 1)
+                                        {
+                                            @(userProject.Name)
+                                            ;
+                                        }
+                                        else
+                                        {
+                                            @("No Assigned Projects")
+                                            ;
+                                        }
+                                    }
+                                </td>
+                                <form asp-action="ManageUserRoles" asp-controller="Companies" id="form-userId" method="post">
+                                <td>
+                                    <input type="hidden" asp-for="@viewModel.BTUser.Id">
+                                    <select asp-for="@viewModel.SelectedRole" class="form-control" asp-items="@viewModel.Roles">
+                                    </select>
+                                    <span asp-validation-for="@viewModel.SelectedRole" class="text-danger"></span>
+                                </td>
+                                <td>
+                                    <div class="form-group">
+                                        <input type="submit" id="formSubmit" value="Assign Role" class="btn btn-primary" />
+                                    </div>
+                                </td>
+                                </form>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
+
+
+@section Scripts {
+    @{
+        <script>
+            onclick = "$('#formSubmit').Submit()";
+        </script>
+
+        //<script>
+        //    $(document).ready(function () {
+        //        $("#formSubmit").click(function () {
+        //            $('#form-userId').Submit();
+        //        });
+        //    });
+        //</script>
+
+        <script>
+            $(document).ready(function () {
+                $('#uTable').DataTable();
+            });
+        </script>
+
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }

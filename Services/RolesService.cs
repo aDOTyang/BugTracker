@@ -1,5 +1,6 @@
 ﻿using BugTracker.Data;
 using BugTracker.Models;
+using BugTracker.Models.Enums;
 using BugTracker.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -31,7 +32,7 @@ namespace BugTracker.Services
         {
             try
             {
-                List<IdentityRole> result = await _context.Roles.ToListAsync();
+                List<IdentityRole> result = await _context.Roles.Where(r=>r.Id != nameof(BTRoles.DemoUser)).ToListAsync();
                 return result;
             }
             catch (Exception) { throw; }

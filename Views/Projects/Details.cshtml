@@ -17,31 +17,18 @@
     //double percent = (resolvedTickets / totalTickets) * 100;
 }
 
-<h1>Details</h1>
-
 <div>
-    <div class="container-fluid">
-        <div class="row gy-2">
+    <div class="container-fluid" style="font-weight:bold">
+        <div class="row justify-content-center g-2">
             <div class="col-md-12 col">
-                <div class="row col-cols-2 mt-5 bg-secondary">
-                    <div class="card col m-1 p-2">
-                        <div class="body">
-                            <h5>@Model.Name</h5>
-                            <p>@Model.Description</p>
-                            <div class="progress-container progress-info m-b-25">
-                                <span class="progress-badge" style="font-size:small">Project Status</span>
-                                <div class="progress">
-                                    @* Razor code block *@
-                                    [Progress Bar code]
-                                    <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" @*style="width: @percent%;"*@>
-                                        @* Use Progress Bar code variable here *@
-                                        <span class="progress-value">100%</span>
-                                    </div>
-                                </div>
-                            </div>
+                <div class="row col-cols-2 mt-3 rounded-3 justify-content-center">
+                    <div class="card col m-2 p-1 rounded-3 box-shadow shadow-lg">
+                        <div class="card-body">
+                            <h5>Project Name: @Model.Name</h5>
+                            <p>Project Details: @Model.Description</p>
                         </div>
                     </div>
-                    <div class="card col m-1 p-2">
+                    <div class="card col m-2 p-3 rounded-3 box-shadow shadow-lg">
                         <div class="body">
                             <ul class=" list-unstyled basic-list">
                                 <li>Start Date: <span class="">@Model.StartDate</span></li>
@@ -54,8 +41,8 @@
                 </div>
             </div>
             <div class="col-md-4 col mt-5 ">
-                <div class="bg-secondary">
-                    <div class="card m-1 p-2">
+                <div class="row mt-3 rounded-3 justify-content-center">
+                    <div class="card col m-2 mx-3 p-3 rounded-3 box-shadow shadow-lg">
                         <div class="header">
                             <h2>Project Manager</h2>
                             <hr />
@@ -77,8 +64,8 @@
                 </div>
             </div>
             <div class="col-md-4 col mt-5 ">
-                <div class="bg-secondary">
-                    <div class="card m-1 p-2">
+                <div class="row mt-3 rounded-3 justify-content-center">
+                    <div class="card col m-2 mx-3 p-3 rounded-3 box-shadow shadow-lg">
                         <div class="header">
                             <h2>Project Team</h2>
                             <hr />
@@ -100,13 +87,13 @@
                 </div>
             </div>
             <div class="col-md-4 col mt-5 ">
-                <div class="bg-dark">
-                    <div class="card m-1 p-2">
+                <div class="row mt-3 rounded-3 justify-content-center">
+                    <div class="card col m-2 mx-3 p-3 rounded-3 box-shadow shadow-lg">
                         <div class="header">
                             <h2>Project Activity</h2>
                             <hr />
                         </div>
-                        <div class="body" style="overflow-y:auto;height:300px;background-color:antiquewhite">
+                        <div class="body" style="overflow-y:auto;height:300px">
                             @* Project Activity loop *@
                             @foreach (TicketHistory history in (await _HistoryService.GetProjectTicketsHistoriesAsync(Model.Id, Model.CompanyId)).OrderByDescending(h => h.Created))
                             {
@@ -136,8 +123,8 @@
                 </div>
             </div>
             <div class="col-md-12 col">
-                <div class="mt-5 bg-secondary">
-                    <div class="card m-1 p-2">
+                <div class="row mt-3 rounded-3 justify-content-center">
+                    <div class="card col m-2 p-3 rounded-3 box-shadow shadow-lg">
                         <div class="header">
                             <h2>Tickets</h2>
                         </div>
@@ -160,7 +147,7 @@
                                         @foreach (var ticket in Model.Tickets.OrderByDescending(d => d.Created))
                                         {
                                             <tr>
-                                                <td><a asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id" style="color:black"><strong>@ticket.Title</strong></a> </td>
+                                                <td><a asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id"><strong>@ticket.Title</strong></a> </td>
                                                 <td>
                                                     @if (ticket.DeveloperUserId != null)
                                                     {
@@ -170,7 +157,7 @@
                                                     {
                                                         if (User.IsInRole(nameof(BTRoles.Admin)) || User.IsInRole(nameof(BTRoles.ProjectManager)))
                                                         {
-                                                            <a class="btn btn-xs btn-info" asp-action="AssignDeveloper" asp-controller="Home" asp-route-ticketId="@ticket.Id">Assign Dev</a>
+                                                            <a class="btn btn-primary-light" asp-action="AssignDeveloper" asp-controller="Home" asp-route-ticketId="@ticket.Id">Assign Dev</a>
                                                         }
                                                     }
                                                 </td>
@@ -186,15 +173,15 @@
                                                 <td><span class="">@ticket.TicketPriority!.Name </span></td>
                                                 <td>@ticket.Created.ToString("MM-dd-yyyy")</td>
                                                 <td>
-                                                    <a class="btn btn-sm btn-outline-info" asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id"><i class="fs-5 bi-justify"></i></a>
+                                                    <a class="btn btn-sm btn-info" asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id">Details</a>
                                                     @if (ticket.DeveloperUserId == userId || ticket.SubmitterUserId == userId || (projectmanager?.Id == userId) || User.IsInRole(nameof(BTRoles.Admin)))
                                                     {
-                                                        <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-controller="Tickets" asp-route-id="@ticket.Id"><i class="fs-5 bi-pencil"></i></a>
+                                                        <a class="btn btn-sm btn-secondary" asp-action="Edit" asp-controller="Tickets" asp-route-id="@ticket.Id">Edit</a>
                                                     }
 
                                                     @if (User.IsInRole("Admin") || (projectmanager?.Id == userId))
                                                     {
-                                                        <a class="btn btn-sm btn-outline-danger"><i class="fs-5 bi-archive"></i></a>
+                                                        <a class="btn btn-sm btn-danger">Archive</a>
                                                     }
                                                 </td>
                                             </tr>
@@ -211,116 +198,3 @@
         </div>
     </div>
 </div>
-
-@*<div>
-    <h4>Project Details</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Created)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Created)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.StartDate)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.StartDate)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.EndDate)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.EndDate)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ImageFileData)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.ImageFileData)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ImageFileType)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.ImageFileType)
-        </dd>
-        <dt class="col-sm-2">
-            Project Manager
-        </dt>
-        <dd class="col-sm-2">
-            @{
-                BTUser? projectManager = await _ProjectService.GetProjectManagerAsync(Model.Id);
-            }
-            @if (User.IsInRole(nameof(BTRoles.Admin)))
-            {
-                <text>@(projectManager?.FullName ?? "UnAssigned")</text>
-                <a asp-controller="Projects" asp-action="AssignPM" asp-route-id="@Model.Id" class="btn btn-primary">Assign PM</a>
-            }
-        </dd>
-        <span></span>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Archived)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Archived)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Company)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Company.Name)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ProjectPriority)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.ProjectPriority.Name)
-        </dd>
-    </dl>
-
-    <table>
-        <thead>
-            Project Tickets
-        </thead>
-        @foreach (Ticket ticket in Model.Tickets)
-        {
-            <tr>
-                <td>@ticket.Title</td>
-                <td>@ticket.Description</td>
-                <td>@ticket.TicketStatus</td>
-                <td>@ticket.TicketType</td>
-                <td>@ticket.TicketPriority</td>
-                <td><span>Ticket has @ticket.Comments</span> comments.</td>
-                <td><span>Ticket has @ticket.Attachments.Count()</span> attachments.</td>
-            </tr>
-        }
-    </table>
-
-    <h2>Project History</h2>
-    @foreach (TicketHistory history in (await _HistoryService.GetProjectTicketsHistoriesAsync(Model.Id, Model.CompanyId)).OrderByDescending(h => h.Created))
-    {
-        <span class="date" style="font-weight:bold">@history.Created.ToString("dd MMM yyyy")</span>
-        <h6>@history.Description</h6>
-        <span>By: <a href="@history.UserId"></a></span>
-    }
-
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
-*@

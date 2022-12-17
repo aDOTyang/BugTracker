@@ -5,16 +5,113 @@
 @using Microsoft.AspNetCore.Identity
 
 @inject UserManager<BTUser> _UserManager
-@inject IProjectService _ProjectService
-@inject IFileService _FileService
+@inject IProjectService _projectService
+@inject IFileService _fileService
+@inject ITicketService _ticketService
+@inject UserManager<BTUser> _userManager
 
 @{
     ViewData["Title"] = "Archive";
     int companyId = (await _UserManager.GetUserAsync(User)).CompanyId;
-    var projects = await _ProjectService.GetAllProjectsByCompanyIdAsync(companyId);
+    var projects = await _projectService.GetAllProjectsByCompanyIdAsync(companyId);
 }
 
-<h1>Archived Projects</h1>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 text-center">
+            <h3 class="mt-3">All Archived Projects</h3>
+            @*<ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item">dashboard</li>
+            <li class="breadcrumb-item active">project list</li>
+            </ol>*@
+        </div>
+    </div>
+</div>
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row project-cards">
+        <div class="col-md-12 project-list">
+            <div class="">
+                <div class="row justify-content-between">
+                    @if (User.IsInRole("Admin") || User.IsInRole("ProjectManager"))
+                    {
+                        <a asp-controller="Projects" asp-action="Create" class="btn btn-primary col-3">Create New Project</a>
+                    }
+                    <a asp-controller="Projects" asp-action="Index" class="btn btn-info col-3">View Active Projects</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="tab-content" id="top-tabContent">
+                        <div class="tab-pane fade show active" id="top-home" role="tabpanel" aria-labelledby="top-home-tab">
+                            <div class="row">
+                                @foreach (Project project in Model)
+                                {
+                                    <div class="col-xxl-4 col-lg-6">
+                                        <div class="project-box">
+                                            <span class="badge badge-primary">Priority: @project.ProjectPriority.Name</span>
+                                            <a asp-controller="Projects" asp-action="Details" asp-route-id="@project.Id"><h6 class="mt-3"><u>@project.Name</u></h6></a>
+                                            <div class="media mb-2">
+                                                @{
+                                                    BTUser? projectManager = await _projectService.GetProjectManagerAsync(project.Id);
+                                                }
+                                                <img class="img-30 me-2 rounded-circle" src="@if(projectManager != null){
+                                            @_fileService.ConvertByteArrayToFile(projectManager.ImageFileData, projectManager.ImageFileType!,(int)DefaultImage.BTUserImage);}">
+                                                <div class="media-body">
+                                                    <p>
+                                                    <text>Project Manager: @(projectManager?.FullName ?? "Unassigned")</text>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <p>@project.Description</p>
+                                            @*<p>@(new string (project.Description.Take(150).ToArray()))...</p>*@
+                                            <div class="row details">
+                                                <div class="col-6"><u>Active Tickets:</u></div>
+                                                <div class="col-6 font-primary"> @project.Tickets.Where(t=>t.Archived == false).Count()</div>
+                                                <div class="col-6"> <span>Resolved Tickets:</span></div>
+                                                <div class="col-6 font-primary"> @project.Tickets.Where(t=>t.TicketStatus!.Name == nameof(BTTicketStatuses.Resolved)).Count()</div>
+                                                <div class="col-6"> <span>Total Ticket Comments:</span></div>
+                                                <div class="col-6 font-primary"> @project.Tickets.Where(t=>t.Comments != null).Count()</div>
+                                            </div>
+                                            <span>Project Members:</span>
+                                            <div class="customers">
+                                                <ol>
+                                                    @foreach (BTUser member in project.Members)
+                                                    {
+                                                        <li class="d-inline-block">
+                                                            @member.FullName;
+                                                        </li>
+                                                    }
+                                                </ol>
+                                            </div><div class="customers">
+                                                <ul>
+                                                    @foreach (BTUser member in project.Members)
+                                                    {
+                                                        <li class="d-inline-block">
+                                                            <img class="img-30 rounded-circle" src="@if(member != null){
+                                                    @_fileService.ConvertByteArrayToFile(member.ImageFileData, member.ImageFileType!,(int)DefaultImage.BTUserImage);}" alt="Project member image">
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@*<h1>Archived Projects</h1>
 <table class="table">
     <thead>
         <tr>
@@ -93,35 +190,4 @@
             </tr>
         }
     </tbody>
-</table>
-
-@*
-@foreach (Project project in projects)
-{
-    if (project.Archived == true)
-    {
-        <div class="row row-cols-1 row-cols-md-3">
-            <div class="col">
-                <div class="hc-wrapper">
-                    <div class="hc-card">
-                        <picture>
-                            <source srcset="@_FileService.ConvertByteArrayToFile(project.ImageFileData!, project.ImageFileType!, (int)DefaultImage.ProjectImage)" />
-                            <img src="@_FileService.ConvertByteArrayToFile(project.ImageFileData!, project.ImageFileType!, (int)DefaultImage.ProjectImage)" />
-                        </picture>
-                        <div class="hc-content">
-                            <p>
-                                @project.Description
-                            </p>
-                            <button type="button"
-                            class="btn btn-primary"
-                            data-bs-toggle="modal"
-                            data-bs-target="#@project.Id">
-                                See Project Details
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    }
-}*@
+</table>*@

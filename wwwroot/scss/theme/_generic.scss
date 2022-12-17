@@ -374,33 +374,6 @@ $badge-color:
 /*======= Badge-color css end  ======= */
 
 
-/*======= Background-color css starts  ======= */
-
-$background-name:
-        primary,
-        secondary,
-        success,
-        danger,
-        info,
-        light,
-        dark,
-        warning;
-$background-color:
-        $primary-color,
-        $secondary-color,
-        $success-color,
-        $danger-color,
-        $light-font,
-        $light-gray,
-        $dark-color,
-        $warning-color;
-@each $var in $background-name {
-  $i: index($background-name, $var);
-  .bg-#{$var} {
-    background-color: nth($background-color, $i) !important;
-    color: $white;
-  }
-}
 
 
 /*======= Background-color css end  ======= */
@@ -434,7 +407,7 @@ $fb;
 @each $var in $text-name {
   $i: index($text-name, $var);
   .txt-#{$var} {
-    color: nth($label-color, $i) !important;
+/*    color: nth($label-color, $i) !important;*/
   }
 }
 .txt-white{
@@ -635,7 +608,7 @@ $warning-color;
   .table-styling .table-#{$var},
   .table-styling.table-#{$var} {
     background-color: nth($border-color, $i);
-    color: $white !important;
+/*    color: $white !important;*/
     border: 3px solid nth($border-color, $i);
     thead {
       background-color: darken(nth($border-color, $i), 10%);
@@ -643,7 +616,7 @@ $warning-color;
     }
     tr{
       th,td{
-      color:$white;  
+ /*     color:$white;  */
       }
     }
     th,

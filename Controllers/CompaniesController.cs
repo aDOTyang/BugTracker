@@ -13,6 +13,8 @@ using BugTracker.Models.ViewModels;
 using BugTracker.Extensions;
 using BugTracker.Services.Interfaces;
 using BugTracker.Models.Enums;
+using BugTracker.Services;
+using System.Diagnostics.Metrics;
 
 namespace BugTracker.Controllers
 {
@@ -117,15 +119,17 @@ namespace BugTracker.Controllers
 
             foreach (BTUser member in members)
             {
+                if (await _userManager.IsInRoleAsync(member, nameof(BTRoles.DemoUser))) continue;
                 if (string.Compare(btUserId, member.Id) != 0)
                 {
                     ManageUserRolesViewModel viewModel = new();
-                    IEnumerable<string> currentRoles = await _rolesService.GetUserRolesAsync(member);
+                    IEnumerable<string> currentRole = await _rolesService.GetUserRolesAsync(member);
                     viewModel.BTUser = member;
-                    viewModel.Roles = new MultiSelectList(await _rolesService.GetRolesAsync(), "Name", "Name", currentRoles);
+                    viewModel.Roles = new SelectList((await _rolesService.GetRolesAsync()).Where(r=>r.Name != nameof(BTRoles.DemoUser)), "Name", "Name", currentRole.FirstOrDefault());
                     model.Add(viewModel);
                 }
             }
+
             return View(model);
         }
 
@@ -136,7 +140,7 @@ namespace BugTracker.Controllers
             int companyId = User.Identity!.GetCompanyId();
             BTUser? btUser = (await _companyService.GetMembersAsync(companyId)).FirstOrDefault(c => c.Id == viewModel.BTUser!.Id);
             IEnumerable<string> currentRoles = await _rolesService.GetUserRolesAsync(btUser!);
-            string? selectedRole = viewModel.SelectedRoles!.FirstOrDefault();
+            string? selectedRole = viewModel.SelectedRole!;
 
             if (!string.IsNullOrEmpty(selectedRole))
             {
