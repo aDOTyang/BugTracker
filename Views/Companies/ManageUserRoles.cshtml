@@ -56,7 +56,7 @@
                     Use the list of available roles to select the role(s) this user should be assigned.<br />
                     Once the desired role(s) are selected, click "Assign Roles" to submit the form.
                 </p>
-                <table id="uTable" class="col-12 align-items-center">
+                <table id="uTable" class="col-12">
                     <thead>
                         <tr>
                             <th class="text-center col-1">User Name</th>
@@ -95,16 +95,16 @@
                                         }
                                     }
                                 </td>
-                                <form asp-action="ManageUserRoles" asp-controller="Companies" id="form-userId" method="post">
+                                <form asp-action="ManageUserRoles" asp-controller="Companies" method="post">
                                 <td>
                                     <input type="hidden" asp-for="@viewModel.BTUser.Id">
-                                    <select asp-for="@viewModel.SelectedRole" class="form-control" asp-items="@viewModel.Roles">
+                                    <select asp-for="@viewModel.SelectedRole" class="form-control text-center" asp-items="@viewModel.Roles">
                                     </select>
                                     <span asp-validation-for="@viewModel.SelectedRole" class="text-danger"></span>
                                 </td>
                                 <td>
                                     <div class="form-group">
-                                        <input type="submit" id="formSubmit" value="Assign Role" class="btn btn-primary" />
+                                        <input type="submit" id="formSubmit" value="Assign Role" class="btn btn-primary mt-3" />
                                     </div>
                                 </td>
                                 </form>

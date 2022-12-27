@@ -16,6 +16,7 @@ using BugTracker.Models.ViewModels;
 using BugTracker.Services;
 using System.ComponentModel.Design;
 using System.Net.Sockets;
+using Org.BouncyCastle.Bcpg;
 
 namespace BugTracker.Controllers
 {
@@ -26,13 +27,15 @@ namespace BugTracker.Controllers
         private readonly IFileService _fileService;
         private readonly IProjectService _projectService;
         private readonly IRolesService _rolesService;
+        private readonly ICompanyService _companyService;
 
-        public ProjectsController(UserManager<BTUser> userManager, IFileService fileService, IProjectService projectService, IRolesService rolesService)
+        public ProjectsController(UserManager<BTUser> userManager, IFileService fileService, IProjectService projectService, IRolesService rolesService, ICompanyService companyService)
         {
             _userManager = userManager;
             _fileService = fileService;
             _projectService = projectService;
             _rolesService = rolesService;
+            _companyService = companyService;
         }
 
         //GET: Projects
@@ -117,6 +120,34 @@ namespace BugTracker.Controllers
             return View(viewModel);
         }
 
+        [HttpPost]
+        [Authorize(Roles = nameof(BTRoles.Admin))]
+        [ValidateAntiForgeryToken]
+        // POST: Projects/AddMember
+        public async Task<IActionResult> AddMember(BTUser member, int projectId)
+        {
+            if (member != null && projectId != null)
+            {
+                await _projectService.AddMemberToProjectAsync(member, projectId);
+                return View(member);
+            }
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = nameof(BTRoles.Admin))]
+        [ValidateAntiForgeryToken]
+        // POST: Projects/RemoveMember
+        public async Task<IActionResult> RemoveMember(BTUser member, int projectId)
+        {
+            if (member != null && projectId != null)
+            {
+                await _projectService.RemoveMemberFromProjectAsync(member, projectId);
+                return RedirectToAction(nameof(Details), new { id = projectId });
+            }
+            return View();
+        }
+
         // GET: Projects/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -133,6 +164,7 @@ namespace BugTracker.Controllers
                 return NotFound();
             }
 
+            ViewData["Members"] = new SelectList(await _companyService.GetMembersAsync(companyId), "FullName", "FullName");
             return View(project);
         }
 
@@ -155,6 +187,12 @@ namespace BugTracker.Controllers
         public async Task<IActionResult> Create([Bind("Id,Created,ProjectPriorityId,Name,Description,StartDate,EndDate,ImageFormFile,Archived")] Project project, string PMId)
         {
             ModelState.Remove("CompanyId");
+
+            if (string.IsNullOrEmpty(PMId))
+            {
+                ModelState.Remove("PMId");
+            }
+
             if (ModelState.IsValid)
             {
                 int companyId = User.Identity!.GetCompanyId();
@@ -222,6 +260,11 @@ namespace BugTracker.Controllers
             if (id != project.Id)
             {
                 return NotFound();
+            }
+
+            if (string.IsNullOrEmpty(PMId))
+            {
+                ModelState.Remove("PMId");
             }
 
             if (ModelState.IsValid)

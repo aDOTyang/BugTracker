@@ -133,6 +133,32 @@ namespace BugTracker.Services
             }
         }
 
+        public async Task<List<Project>> GetAllProjectsByPriorityAsync(int companyId, string priority)
+        {
+            try
+            {
+                List<Project> projects = await _context.Projects.Where(c => c.CompanyId == companyId && c.Archived == false && c.ProjectPriority.Name == priority)
+                                                                .Include(p => p.Company)
+                                                                .Include(p => p.ProjectPriority)
+                                                                .Include(p => p.Members)
+                                                                .Include(p => p.Tickets).ThenInclude(t => t.Comments)
+                                                                .Include(p => p.Tickets).ThenInclude(t => t.Attachments)
+                                                                .Include(p => p.Tickets).ThenInclude(t => t.History)
+                                                                .Include(p => p.Tickets).ThenInclude(t => t.TicketPriority)
+                                                                .Include(p => p.Tickets).ThenInclude(t => t.TicketStatus)
+                                                                .Include(p => p.Tickets).ThenInclude(t => t.TicketType)
+                                                                .Include(p => p.Tickets).ThenInclude(t => t.SubmitterUser)
+                                                                .Include(p => p.Tickets).ThenInclude(t => t.DeveloperUser)
+                                                                .OrderByDescending(c => c.Id).ToListAsync();
+                return projects;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<List<Project>> GetArchivedProjectsByCompanyIdAsync(int companyId)
         {
             try

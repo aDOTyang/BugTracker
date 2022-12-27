@@ -23,24 +23,30 @@
             <div class="col-md-12 col">
                 <div class="row col-cols-2 mt-3 rounded-3 justify-content-center">
                     <div class="card col m-2 p-1 rounded-3 box-shadow shadow-lg">
-                        <div class="card-body">
-                            <h5>Project Name: @Model.Name</h5>
-                            <p>Project Details: @Model.Description</p>
+                        <div class="card-body row">
+                            <div class="col-10">
+                                <h5>Project Name: @Model.Name</h5>
+                                <p>Project Details: @Model.Description</p>
+                            </div>
+                            <div class="col-2">
+                                <img class="img-100 rounded-circle" src="@_FileService.ConvertByteArrayToFile(Model.ImageFileData, Model.ImageFileType!,(int)DefaultImage.ProjectImage)">
+                            </div>
                         </div>
                     </div>
                     <div class="card col m-2 p-3 rounded-3 box-shadow shadow-lg">
                         <div class="body">
                             <ul class=" list-unstyled basic-list">
-                                <li>Start Date: <span class="">@Model.StartDate</span></li>
+                                <li>Start Date: <span>@Model.StartDate</span></li>
                                 <li>Deadline: <span class="">@Model.EndDate</span></li>
                                 <li>Priority: <span class="">@Model.ProjectPriority!.Name</span></li>
-                                Project is @((Model.Archived == false) ? "Active" : "Inactive")
+                                <li style="@((Model.Archived == false) ? "color:green" : "color:red")">Project is @((Model.Archived == false) ? "Active" : "Inactive")</li>
                             </ul>
+                            <a asp-controller="Projects" asp-action="edit" asp-route-id="@Model.Id" class="btn btn-sm btn-primary col-3 mt-2">Edit</a>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 col mt-5 ">
+            <div class="col-md-3 col mt-5 ">
                 <div class="row mt-3 rounded-3 justify-content-center">
                     <div class="card col m-2 mx-3 p-3 rounded-3 box-shadow shadow-lg">
                         <div class="header">
@@ -53,9 +59,9 @@
                             {
                                 if (await _UserManager.IsInRoleAsync(projectManager, "ProjectManager"))
                                 {
-                                    <div class="row align-items-center">
-                                        <img src="@_FileService.ConvertByteArrayToFile(Model.ImageFileData!, Model.ImageFileType!,(int)DefaultImage.BTUserImage)" alt="Project Manager Picture" class="col-2">
-                                        <span class="col-10">@projectManager.FullName</span>
+                                    <div class="row align-items-center justify-content-center mt-5">
+                                        <img src="@_FileService.ConvertByteArrayToFile(Model.ImageFileData!, Model.ImageFileType!,(int)DefaultImage.BTUserImage)" alt="Project Manager Picture" class="img-fluid rounded-circle img-100">
+                                        <span class="text-center">@projectManager.FullName</span>
                                     </div>
                                 }
                             }
@@ -63,20 +69,39 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 col mt-5 ">
+            <div class="col-md-5 col mt-5 ">
                 <div class="row mt-3 rounded-3 justify-content-center">
                     <div class="card col m-2 mx-3 p-3 rounded-3 box-shadow shadow-lg">
-                        <div class="header">
+                        <div class="header col-12">
                             <h2>Project Team</h2>
                             <hr />
+                            <div class="row">
+                                <form asp-controller="Projects" asp-action="AddMember" method="post">
+                                    <input type="hidden" asp-for="@Model.Id" name="projectId">
+                                    <input type="hidden" asp-for="@Model.CompanyId">
+                                    <select class="form-control" asp-items="ViewBag.Members" name="Members.FullName">
+                                        <option>Add A Project Team Member</option>
+                                    </select>
+                                    <input type="submit" class="btn btn-primary col-4 mt-2" value="Add Member">
+                                </form>
+                            </div>
+                            <hr />
                         </div>
-                        <div class="body" style="overflow-y:auto;height:300px;">
+                        <div class="body" style="overflow-y:auto;">
                             <ul class="right_chat list-unstyled mb-0">
                                 @foreach (BTUser member in Model.Members)
                                 {
-                                    <li class="row align-items-center">
-                                        <img src="@_FileService.ConvertByteArrayToFile(Model.ImageFileData!, Model.ImageFileType!,(int)DefaultImage.BTUserImage)" alt="Project Manager Picture" class="col-2">
-                                        <span class="col-10">@member.FullName</span>
+                                    <li class="mb-2">
+                                        <form asp-controller="Projects" asp-action="RemoveMember" method="post">
+                                            <input type="hidden" asp-for="@Model.Id" name="projectId">
+                                            <input type="hidden" asp-for="@member.FirstName">
+                                            <input type="hidden" asp-for="@member.LastName">
+                                            <input type="hidden" asp-for="@member.Id">
+                                            <input type="hidden" asp-for="@member.CompanyId">
+                                            <img src="@_FileService.ConvertByteArrayToFile(Model.ImageFileData!, Model.ImageFileType!,(int)DefaultImage.BTUserImage)" alt="Project Member Picture" class="img-fluid img-50 rounded-circle">
+                                            <label asp-for="ImageFormFile" class="ms-2 me-4">@member.FullName</label>
+                                            <input type="submit" class="btn btn-primary-light text-end" value="Remove Member">
+                                        </form>
                                     </li>
                                 }
                                 @* Logic for avatars *@

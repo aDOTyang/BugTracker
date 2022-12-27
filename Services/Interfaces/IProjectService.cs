@@ -9,6 +9,7 @@ namespace BugTracker.Services.Interfaces
         public Task<bool> AddProjectManagerAsync(string userId, int projectId);
         public Task ArchiveProjectAsync(Project project);
         public Task<List<Project>> GetAllProjectsByCompanyIdAsync(int companyId);
+        public Task<List<Project>> GetAllProjectsByPriorityAsync(int companyId, string priority);
         public Task<List<Project>> GetArchivedProjectsByCompanyIdAsync(int companyId);
         public Task<List<Project>?> GetUserProjectsAsync(string userId);
         public Task<Project> GetProjectByIdAsync(int projectId, int companyId);
