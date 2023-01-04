@@ -124,12 +124,16 @@ namespace BugTracker.Controllers
         [Authorize(Roles = nameof(BTRoles.Admin))]
         [ValidateAntiForgeryToken]
         // POST: Projects/AddMember
-        public async Task<IActionResult> AddMember(BTUser member, int projectId)
+        public async Task<IActionResult> AddMember(BTUser member, int projectId, string memberName)
         {
             if (member != null && projectId != null)
             {
+                string[] fName = memberName.Split(' ');
+                member.FirstName = fName[0];
+                member.LastName = fName[1];
+
                 await _projectService.AddMemberToProjectAsync(member, projectId);
-                return View(member);
+                return RedirectToAction(nameof(Details),"Projects", new { id = projectId });
             }
             return View();
         }

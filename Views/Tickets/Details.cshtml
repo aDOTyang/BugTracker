@@ -14,24 +14,29 @@
         <div class="row justify-content-center g-2">
             <div class="col-md-12 col">
                 <div class="row col-cols-2 mt-3 rounded-3 justify-content-center">
-                    <div class="card col m-2 p-2 rounded-3 box-shadow shadow-lg">
+                    <div class="card col m-2 p-1 rounded-3 box-shadow shadow-lg">
                         <div class="card-body">
                             <h5><u>Ticket Name:</u> @Model.Title</h5>
-                            <h5><u>Ticket Description:</u> @Model.Description</h5><hr />
-                            <div class="progress-container progress-info m-b-25">
+                            <p><u>Ticket Description:</u> @Model.Description</p><hr />
+                            <div class="progress-container progress-info row">
+                                <div class="col-10">
                                 <a asp-controller="Projects" asp-action="Details" asp-route-id="@Model.Project!.Id"><h5><u>Project Information:</u> @Model.Project!.Name</h5></a>
-                                <h6>@Model.Project!.Description</h6>
+                                    <p><u>Project Details:</u> @Model.Project!.Description</p>
+                                </div>
+                                <div class="col-2">
+                                    <img class="img-100 rounded-circle" src="@_FileService.ConvertByteArrayToFile(Model.Project.ImageFileData, Model.Project.ImageFileType!,(int)DefaultImage.ProjectImage)">
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="card col m-2 p-2 rounded-3 box-shadow shadow-lg">
                         <div class="card-body">
-                            <ul class="list-unstyled">
-                                <li><h6><u>Ticket Created:</u> @Model.Created</h6></li>
-                                <li><h6><u>Project Deadline:</u> @Model.Project.EndDate</h6></li>
-                                <li><h6><u>Ticket Type:</u> @Model.TicketType!.Name</h6></li>
-                                <li><h6><u>Ticket Priority:</u> @Model.TicketPriority!.Name</h6></li>
-                                <li><h6><u>Ticket Status:</u> @Model.TicketStatus!.Name</h6></li>
+                            <ul class="list-unstyled basic-list">
+                                <li><u>Ticket Created:</u> @Model.Created</li>
+                                <li><u>Project Deadline:</u> @Model.Project.EndDate</li>
+                                <li><u>Ticket Type:</u> @Model.TicketType!.Name</li>
+                                <li><u>Ticket Priority:</u> @Model.TicketPriority!.Name</li>
+                                <li><u>Ticket Status:</u> @Model.TicketStatus!.Name</li>
                             </ul>
                         </div>
                     </div>
