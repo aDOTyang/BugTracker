@@ -12,7 +12,7 @@
     BTUser? projectmanager = (await _UserManager.GetUsersInRoleAsync("ProjectManager")).FirstOrDefault();
     string userId = _UserManager.GetUserId(User);
 
-    //int totalTickets = Model.Tickets.Where(t => t.Archived == false && t.ArchivedByProject == false && t.TicketStatus != BTTicketStatuses.Resolved);
+            //int totalTickets = Model.Tickets.Where(t => t.Archived == false && t.ArchivedByProject == false && t.TicketStatus != BTTicketStatuses.Resolved);
     //int resolvedTickets = Model.Tickets.Where(t => t.TicketStatus.Id == nameof(BTTicketStatuses.Resolved));
     //double percent = (resolvedTickets / totalTickets) * 100;
 }
@@ -41,7 +41,10 @@
                                 <li><u>Priority:</u> <span class="">@Model.ProjectPriority!.Name</span></li>
                                 <li style="@((Model.Archived == false) ? "color:green" : "color:red")">Project is @((Model.Archived == false) ? "Active" : "Inactive")</li>
                             </ul>
-                            <a asp-controller="Projects" asp-action="edit" asp-route-id="@Model.Id" class="btn btn-sm btn-primary col-3 mt-2">Edit</a>
+                            <div class="row justify-content-between mx-1">
+                                <a asp-controller="Projects" asp-action="edit" asp-route-id="@Model.Id" class="btn btn-sm btn-primary col-3 mt-2">Edit</a>
+                                <a asp-action="Index" class="col-2 btn btn-secondary mt-2 col-3">Back to List</a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -50,7 +53,7 @@
                 <div class="row mt-3 rounded-3 justify-content-center">
                     <div class="card col m-2 mx-3 p-3 rounded-3 box-shadow shadow-lg">
                         <div class="header">
-                            <h2>Project Manager</h2>
+                            <h4>Project Manager</h4>
                             <hr />
                         </div>
                         <div class="body" style="overflow-y:auto;height:300px;">
@@ -73,7 +76,7 @@
                 <div class="row mt-3 rounded-3 justify-content-center">
                     <div class="card col m-2 mx-3 p-3 rounded-3 box-shadow shadow-lg">
                         <div class="header col-12">
-                            <h2>Project Team</h2>
+                            <h4>Project Team</h4>
                             <hr />
                             <div class="row">
                                 <form asp-controller="Projects" asp-action="AddMember" method="post">
@@ -104,7 +107,6 @@
                                         </form>
                                     </li>
                                 }
-                                @* Logic for avatars *@
                             </ul>
 
                         </div>
@@ -115,7 +117,7 @@
                 <div class="row mt-3 rounded-3 justify-content-center">
                     <div class="card col m-2 mx-3 p-3 rounded-3 box-shadow shadow-lg">
                         <div class="header">
-                            <h2>Project Activity</h2>
+                            <h4>Project Activity</h4>
                             <hr />
                         </div>
                         <div class="body" style="overflow-y:auto;height:300px">

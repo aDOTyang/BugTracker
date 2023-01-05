@@ -147,7 +147,7 @@ namespace BugTracker.Controllers
             if (member != null && projectId != null)
             {
                 await _projectService.RemoveMemberFromProjectAsync(member, projectId);
-                return RedirectToAction(nameof(Details), new { id = projectId });
+                return RedirectToAction(nameof(Details),"Projects", new { id = projectId });
             }
             return View();
         }

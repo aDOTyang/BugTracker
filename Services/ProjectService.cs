@@ -33,7 +33,6 @@ namespace BugTracker.Services
 
                 if (!IsOnProject)
                 {
-                    // member needs firstname, lastname, companyId
                     project.Members.Add(member);
                     await _context.SaveChangesAsync();
                     // bool false by default, method only returns true if member add successful

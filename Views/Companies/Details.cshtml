@@ -9,11 +9,11 @@
 
 @{
     ViewData["Title"] = "Details";
-    List<Project> projects = (await _projectService.GetAllProjectsByCompanyIdAsync(Model.Id)).Where(p=>p.Archived == false).ToList();
+    List<Project> projects = (await _projectService.GetAllProjectsByCompanyIdAsync(Model.Id)).Where(p => p.Archived == false).ToList();
     List<Ticket> tickets = (await _ticketService.GetAllTicketsByCompanyIdAsync(Model.Id)).Where(t => t.Archived == false && t.ArchivedByProject == false).ToList();
 }
 <div class="row justify-content-center mt-5">
-    <div class="card p-3 rounded-3 shadow-lg col-8">
+    <div class="card p-3 rounded-5 shadow-lg col-8">
         <div class="card-body text-center">
             <h3 class="col-12 my-3 card-header">Company Name: @Model.Name</h3>
             <div class="row card-body align-items-center justify-content-center">
@@ -22,20 +22,20 @@
                 </div>
                 <div class="col-9">
                     <h4>@Model.Description</h4>
-                    <p><span>There are @projects.Count()</span> active Projects in this Company.<br />
-                    <span>There are @tickets.Count()</span> active Tickets in this Company.<br />
-                    <span>There are @Model.Members.Count()</span> Members in this Company.
+                    <p>
+                        <span>There are @projects.Count()</span> active Projects in this Company.<br />
+                        <span>There are @tickets.Count()</span> active Tickets in this Company.<br />
+                        <span>There are @Model.Members.Count()</span> Members in this Company.
                     </p>
                 </div>
             </div>
         </div>
+        @if (User.IsInRole("Admin"))
+        {
+         <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary m-3 col-3">Edit</a>
+        }
     </div>
 </div>
 
-@if (User.IsInRole("Admin"))
-{
-    <div>
-        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary rounded-pill mt-2 ms-3">Edit</a>
-    </div>
-}
+
 
