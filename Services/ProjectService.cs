@@ -263,7 +263,7 @@ namespace BugTracker.Services
             {
                 Project? project = await GetProjectByIdAsync(projectId, member.CompanyId);
 
-                bool IsOnProject = project.Members.Any(m => m.Id == member.Id);
+                bool IsOnProject = project.Members.Any(m => m.Id == member.Id && m.CompanyId == project.CompanyId);
 
                 if (IsOnProject)
                 {
