@@ -82,7 +82,7 @@
                                 <form asp-controller="Projects" asp-action="AddMember" method="post">
                                     <input type="hidden" asp-for="@Model.Id" name="projectId">
                                     <input type="hidden" asp-for="@Model.CompanyId">
-                                    <select class="form-control" asp-items="ViewBag.Members" name="memberName">
+                                    <select class="form-control" asp-items="ViewBag.Members" name="SelectedMember">
                                         <option>Add A Project Team Member</option>
                                     </select>
                                     <input type="submit" class="btn btn-primary col-4 mt-2" value="Add Member">
@@ -97,10 +97,7 @@
                                     <li class="mb-2">
                                         <form asp-controller="Projects" asp-action="RemoveMember" method="post">
                                             <input type="hidden" asp-for="@Model.Id" name="projectId">
-                                            <input type="hidden" asp-for="@member.FirstName">
-                                            <input type="hidden" asp-for="@member.LastName">
-                                            <input type="hidden" asp-for="@member.Id">
-                                            <input type="hidden" asp-for="@member.CompanyId">
+                                            <input type="hidden" asp-for="@member.Id" name="memberId">
                                             <img src="@_FileService.ConvertByteArrayToFile(member.ImageFileData!, member.ImageFileType!,(int)DefaultImage.BTUserImage)" alt="Project Member Picture" class="img-fluid img-50 rounded-circle ms-2">
                                             <label asp-for="@member.FullName" class="ms-2 me-4 col-3">@member.FullName</label>
                                             <input type="submit" class="btn btn-primary-light text-end" value="Remove Member">

@@ -40,17 +40,19 @@
                                     @if (latestProject?.Members != null)
                                     {
                                         <li class=" mt-3"><b><u>Team Members:</u></b></li>
-                                        foreach (BTUser member in latestProject.Members)
-                                        {
-                                            <li><b>Member Name: </b>@member.FullName</li>
-                                            <li class="mb-3">
+                                        <li><b>Member Name: </b>
+                                        @foreach (BTUser member in latestProject.Members)
+                                            {
+                                                <span>@member.FullName@if(latestProject.Members.Count()>1){<text>, </text>; }</span>
+                                                @*<li class="mb-3">
                                                 <b>Member Role(s):</b>@{
                                                     IEnumerable<string> roles = await _rolesService.GetUserRolesAsync(member);
                                                     string rolesOut = string.Join(", ", roles.ToArray());
                                                 }
                                                 @rolesOut
-                                            </li>
-                                        }
+                                            </li>*@
+                                            }
+                                        </li>
                                     }
                                 </ul>
                             </div>

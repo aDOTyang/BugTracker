@@ -124,14 +124,11 @@ namespace BugTracker.Controllers
         [Authorize(Roles = nameof(BTRoles.Admin))]
         [ValidateAntiForgeryToken]
         // POST: Projects/AddMember
-        public async Task<IActionResult> AddMember(BTUser member, int projectId, string memberName)
+        public async Task<IActionResult> AddMember(int projectId, string SelectedMember)
         {
-            if (member != null && projectId != null)
+            if (SelectedMember != null && projectId != null)
             {
-                string[] fName = memberName.Split(' ');
-                member.FirstName = fName[0];
-                member.LastName = fName[1];
-
+                BTUser member = await _userManager.FindByIdAsync(SelectedMember);
                 await _projectService.AddMemberToProjectAsync(member, projectId);
                 return RedirectToAction(nameof(Details),"Projects", new { id = projectId });
             }
@@ -142,10 +139,11 @@ namespace BugTracker.Controllers
         [Authorize(Roles = nameof(BTRoles.Admin))]
         [ValidateAntiForgeryToken]
         // POST: Projects/RemoveMember
-        public async Task<IActionResult> RemoveMember(BTUser member, int projectId)
+        public async Task<IActionResult> RemoveMember(string memberId, int projectId)
         {
-            if (member != null && projectId != null)
+            if (memberId != null && projectId != null)
             {
+                BTUser member = await _userManager.FindByIdAsync(memberId);
                 await _projectService.RemoveMemberFromProjectAsync(member, projectId);
                 return RedirectToAction(nameof(Details),"Projects", new { id = projectId });
             }
@@ -168,7 +166,7 @@ namespace BugTracker.Controllers
                 return NotFound();
             }
 
-            ViewData["Members"] = new SelectList(await _companyService.GetMembersAsync(companyId), "FullName", "FullName");
+            ViewData["Members"] = new SelectList(await _companyService.GetMembersAsync(companyId), "Id", "FullName");
             return View(project);
         }
 
