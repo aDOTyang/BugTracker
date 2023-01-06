@@ -26,7 +26,7 @@
                 </select>
                 <button type="submit" class="btn btn-primary mt-5 mb-3">Assign</button>
                 <a asp-controller="Tickets" asp-action="Details" asp-route-ticketId="@Model.Ticket.Id" class="btn btn-primary-light my-3">Ticket Details</a>
-                <a asp-controller="Projects" asp-action="Details" asp-route-ticketId="@Model.Ticket.ProjectId" class="btn btn-primary-light my-3">Project Details</a>
+                <a asp-controller="Projects" asp-action="Details" asp-route-id="@Model.Ticket.ProjectId" class="btn btn-primary-light my-3">Project Details</a>
                 <a asp-controller="Tickets" asp-action="Index" class="btn btn-secondary my-3">Cancel</a>
             </form>
         </div>
